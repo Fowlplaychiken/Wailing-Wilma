@@ -1,0 +1,253 @@
+module: skills.wailing_wilma.main
+name: WailingWilma
+api_version: 3
+version: 0.1.30
+display_name: Wailing Wilma
+author: Star Citizen Computer project
+description:
+  en: Check status and start, stop, or mute optional visual Star Citizen ship warnings for shields, components, power, and engineering.
+tags:
+- Game
+- Star Citizen
+- Engineering
+discovery_keywords:
+- Star Citizen ship warnings
+- Wailing Wilma status
+- start visual warnings
+- stop visual warnings
+- mute or unmute warnings
+- shield charge warning
+- power loss warning
+- engineering console
+discoverable_by_default: true
+auto_activate: false
+custom_properties:
+- id: vision_reader
+  name: Vision reader
+  hint: Use Wingman's configured vision model, or select a separate reader for Wilma.
+    External readers never fall back to another provider. A server can run on another
+    Windows or Linux computer; no model or service is installed by this setting.
+  property_type: single_select
+  options:
+  - label: Wingman's configured model
+    value: wingman
+  - label: OpenRouter
+    value: openrouter
+  - label: OpenAI-compatible server
+    value: local
+  value: wingman
+  required: false
+- id: vision_reader_model
+  name: Separate reader model
+  hint: Required for OpenRouter or a server. Enter that provider's image-capable model ID.
+    This does not change your Wingman's conversation model. Leave unused with Wingman's model.
+  property_type: string
+  value: ''
+  required: false
+- id: vision_reader_endpoint
+  name: Reader server address
+  hint: Only for an OpenAI-compatible server. Enter its /v1 base or full /chat/completions
+    URL. Use HTTPS on untrusted networks; HTTP sends captured images and any selected
+    key without encryption. OpenRouter uses its fixed HTTPS address.
+  property_type: string
+  value: ''
+  required: false
+- id: vision_reader_secret
+  name: Server key name in Secrets (optional)
+  hint: Only the existing secret's name, never paste a key here. Leave empty for an
+    unauthenticated server. OpenRouter always uses the existing openrouter secret.
+  property_type: string
+  value: ''
+  required: false
+- id: vision_reader_json
+  name: Request JSON output from the separate reader
+  hint: Optional; the selected model/server must support JSON mode. An unsupported request
+    is reported without retry or fallback. Wilma still validates every reading;
+    valid JSON does not prove that the reading is visible or correct.
+  property_type: boolean
+  value: false
+  required: false
+- id: vision_reader_no_reasoning
+  name: Disable extra reasoning in the separate reader
+  hint: Optional speed setting. OpenRouter models must support reasoning effort none;
+    server readers must support the enable_thinking template option. Unsupported
+    settings are reported, never silently retried. Leave off for the model's defaults.
+  property_type: boolean
+  value: false
+  required: false
+- id: high_detail_images
+  name: High-detail visual readings
+  hint: Preserve more small display text for local or API vision providers. Uses up
+    to 3.75 megapixels and a 2576-pixel long edge. May increase bandwidth, model
+    latency and API cost or exceed your provider's payload limit. Leave off for
+    Wingman's stock image encoding. No change to warning freshness checks.
+  property_type: boolean
+  value: false
+  required: false
+- id: screen_source
+  name: Screen source
+  hint: Leave on the game. Video playback is a test mode that reads a gameplay video
+    playing in a Chrome or Firefox window in front, as a stand-in for a player; it is
+    never needed to play.
+  property_type: single_select
+  options:
+  - label: Star Citizen
+    value: game
+  - label: Video playback (test)
+    value: video_playback
+  value: game
+  required: false
+- id: start_enabled
+  name: Start Wailing Wilma automatically
+  hint: Enable passive visual warnings when this skill is prepared.
+  property_type: boolean
+  value: false
+  required: false
+- id: sample_interval_seconds
+  name: Pause between visual checks (seconds)
+  hint: One check runs at a time. Lower values use more model capacity. Missing sources
+    use a quiet idle interval.
+  property_type: number
+  value: 1
+  required: false
+- id: maximum_reading_age_seconds
+  name: Maximum reading age (seconds)
+  hint: Discard slower responses rather than speaking old warnings. Prefer a faster
+    model over a large value.
+  property_type: number
+  value: 3
+  required: false
+- id: critical_percent
+  name: Critical remaining percentage
+  hint: Shared critical threshold. Each low threshold must be at least this value.
+  property_type: number
+  value: 5
+  required: false
+- id: repeat_cooldown_seconds
+  name: Repeat warning interval (seconds)
+  hint: Wait this long before repeating the same continuing warning. A newly critical
+    state can still be announced.
+  property_type: number
+  value: 60
+  required: false
+- id: shields_low_percent
+  name: Shield charge low threshold (%)
+  hint: Warn when the visible remaining percentage reaches this value. Must be at
+    least the critical threshold.
+  property_type: number
+  value: 20
+  required: false
+- id: components_low_percent
+  name: Component health low threshold (%)
+  hint: Warn when the visible remaining percentage reaches this value. Must be at
+    least the critical threshold.
+  property_type: number
+  value: 20
+  required: false
+- id: hull_low_percent
+  name: Hull integrity low threshold (%)
+  hint: Warn when the visible remaining percentage reaches this value. Must be at
+    least the critical threshold.
+  property_type: number
+  value: 20
+  required: false
+- id: armor_low_percent
+  name: Armor remaining low threshold (%)
+  hint: Warn when the visible remaining percentage reaches this value. Must be at
+    least the critical threshold.
+  property_type: number
+  value: 20
+  required: false
+- id: fuel_low_percent
+  name: Fuel low threshold (%)
+  hint: Warn when the visible remaining percentage reaches this value. Must be at
+    least the critical threshold.
+  property_type: number
+  value: 20
+  required: false
+- id: quantum_fuel_low_percent
+  name: Quantum fuel low threshold (%)
+  hint: Warn when the visible remaining percentage reaches this value. Must be at
+    least the critical threshold.
+  property_type: number
+  value: 20
+  required: false
+- id: life_support_low_percent
+  name: Oxygen low threshold (%)
+  hint: Warn when the visible remaining percentage reaches this value. Must be at
+    least the critical threshold.
+  property_type: number
+  value: 20
+  required: false
+- id: warn_shields
+  name: Shield charge warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_components
+  name: Component health warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_hull
+  name: Hull integrity warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_armor
+  name: Armor remaining warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_fuel
+  name: Fuel warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_quantum_fuel
+  name: Quantum fuel warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_life_support
+  name: Oxygen warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_power
+  name: Power loss warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_heat
+  name: Overheating warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_fire
+  name: Fire warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_environment
+  name: Environment warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false
+- id: warn_emp
+  name: Explicit EMP warnings
+  hint: Enable this warning category. Saved by Wingman; does not change ship controls.
+  property_type: boolean
+  value: true
+  required: false

@@ -1,0 +1,1 @@
+"""Standalone Wailing Wilma skill."""
