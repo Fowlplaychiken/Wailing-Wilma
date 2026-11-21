@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400" role="img" aria-labelledby="title desc">
   <title id="title">Wailing Wilma</title>
-  <desc id="desc">Foreground ship display flows into a vision reader, fresh validated readings, and a spoken Wingman warning.</desc>
+  <desc id="desc">Wilma reads the visible ship, vehicle or personal display, confirms fresh evidence and asks Wingman to speak.</desc>
   <defs>
     <linearGradient id="background" x2="1" y2="1">
       <stop stop-color="#111c2e"/>
@@ -16,7 +16,7 @@
     <path d="M77 50 107 105H47Z" fill="none" stroke="#ffbe77" stroke-width="3" stroke-linejoin="round"/>
     <path d="M77 68v15m0 8v2" stroke="#ffbe77" stroke-width="4" stroke-linecap="round"/>
     <text x="129" y="82" fill="#f4f7fc" font-size="49" font-weight="700">Wailing Wilma</text>
-    <text x="130" y="118" fill="#b6c5d8" font-size="20">Spoken Star Citizen ship warnings for Wingman AI</text>
+    <text x="130" y="118" fill="#b6c5d8" font-size="20">Spoken alerts in your ship, in a ground vehicle and on foot</text>
     <g fill="#162439" stroke="#32495f">
       <rect x="42" y="196" width="269" height="151" rx="14"/>
       <rect x="366" y="196" width="269" height="151" rx="14"/>

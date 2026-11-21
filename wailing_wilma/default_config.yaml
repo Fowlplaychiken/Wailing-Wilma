@@ -1,7 +1,7 @@
 module: skills.wailing_wilma.main
 name: WailingWilma
 api_version: 3
-version: 0.1.30
+version: 0.1.79
 display_name: Wailing Wilma
 author: Star Citizen Computer project
 description:
@@ -16,16 +16,27 @@ discovery_keywords:
 - start visual warnings
 - stop visual warnings
 - mute or unmute warnings
+- report a wrong or late Wilma warning
+- report a warning Wilma missed
 - shield charge warning
 - power loss warning
 - engineering console
+- review a requested engineering adjustment
 discoverable_by_default: true
 auto_activate: false
 custom_properties:
+- id: engineering_owner_page
+  name: Engineering owner page
+  hint: Optional local Star Citizen Computer owner page, such as http://127.0.0.1:8451/computer/.
+    Leave out any token. Open the authenticated owner panel first, then use Wilma's review link.
+  property_type: string
+  value: ''
+  required: false
 - id: vision_reader
   name: Vision reader
   hint: Use Wingman's configured vision model, or select a separate reader for Wilma.
-    External readers never fall back to another provider. A server can run on another
+    An optional local Waterfall bridge can try your configured models in order.
+    A direct server can run on another
     Windows or Linux computer; no model or service is installed by this setting.
   property_type: single_select
   options:
@@ -35,27 +46,31 @@ custom_properties:
     value: openrouter
   - label: OpenAI-compatible server
     value: local
+  - label: Ollama
+    value: ollama
+  - label: Local Waterfall bridge
+    value: waterfall
   value: wingman
   required: false
 - id: vision_reader_model
   name: Separate reader model
-  hint: Required for OpenRouter or a server. Enter that provider's image-capable model ID.
-    This does not change your Wingman's conversation model. Leave unused with Wingman's model.
+  hint: Enter the direct reader's model ID, wilma-terminal-ocr for the optional engineering
+    terminal reader, or waterfall for the bridge. Your Wingman's conversation model stays selected.
   property_type: string
   value: ''
   required: false
 - id: vision_reader_endpoint
   name: Reader server address
-  hint: Only for an OpenAI-compatible server. Enter its /v1 base or full /chat/completions
-    URL. Use HTTPS on untrusted networks; HTTP sends captured images and any selected
+  hint: Enter the server's /v1 base URL. Waterfall requires a same-machine loopback
+    address. Use HTTPS on untrusted networks; HTTP sends captured images and any selected
     key without encryption. OpenRouter uses its fixed HTTPS address.
   property_type: string
   value: ''
   required: false
 - id: vision_reader_secret
   name: Server key name in Secrets (optional)
-  hint: Only the existing secret's name, never paste a key here. Leave empty for an
-    unauthenticated server. OpenRouter always uses the existing openrouter secret.
+  hint: Only the existing secret's name, never paste a key here. The bridge requires
+    its existing secret name. OpenRouter uses the existing openrouter secret.
   property_type: string
   value: ''
   required: false
@@ -69,9 +84,9 @@ custom_properties:
   required: false
 - id: vision_reader_no_reasoning
   name: Disable extra reasoning in the separate reader
-  hint: Optional speed setting. OpenRouter models must support reasoning effort none;
-    server readers must support the enable_thinking template option. Unsupported
-    settings are reported, never silently retried. Leave off for the model's defaults.
+  hint: Turn on to ask the reader to skip extra reasoning. Ollama and OpenRouter
+    use their own reasoning controls. Other servers need the enable_thinking template
+    option. Leave off to use the model's default.
   property_type: boolean
   value: false
   required: false
@@ -80,7 +95,8 @@ custom_properties:
   hint: Preserve more small display text for local or API vision providers. Uses up
     to 3.75 megapixels and a 2576-pixel long edge. May increase bandwidth, model
     latency and API cost or exceed your provider's payload limit. Leave off for
-    Wingman's stock image encoding. No change to warning freshness checks.
+    Wingman's stock image encoding. If Ollama reports that a high-detail image exceeds
+    its context, Wilma uses stock detail for the next captures with that reader.
   property_type: boolean
   value: false
   required: false
@@ -97,6 +113,12 @@ custom_properties:
     value: video_playback
   value: game
   required: false
+- id: watch_terminals_on_foot
+  name: Watch engineering terminals on foot
+  hint: When Wingman confirms you are on foot or in EVA, keep this on to read engineering terminals. Turn it off to check only enabled personal warnings. With all personal warnings off, Wilma pauses capture until the seat evidence changes or expires.
+  property_type: boolean
+  value: true
+  required: false
 - id: start_enabled
   name: Start Wailing Wilma automatically
   hint: Enable passive visual warnings when this skill is prepared.
@@ -104,9 +126,9 @@ custom_properties:
   value: false
   required: false
 - id: sample_interval_seconds
-  name: Pause between visual checks (seconds)
-  hint: One check runs at a time. Lower values use more model capacity. Missing sources
-    use a quiet idle interval.
+  name: Minimum time between visual check starts (seconds)
+  hint: One check runs at a time. A slow result may already use this interval.
+    Missing sources and reader errors wait before trying again.
   property_type: number
   value: 1
   required: false
@@ -129,6 +151,12 @@ custom_properties:
     state can still be announced.
   property_type: number
   value: 60
+  required: false
+- id: warning_confirmation_frames
+  name: Readings needed before a warning
+  hint: Number of distinct fresh captures required by the warning policy. Leave at 2 unless a replay comparison supports a different number.
+  property_type: number
+  value: 2
   required: false
 - id: shields_low_percent
   name: Shield charge low threshold (%)
@@ -250,4 +278,47 @@ custom_properties:
   hint: Enable this warning category. Saved by Wingman; does not change ship controls.
   property_type: boolean
   value: true
+  required: false
+- id: warn_suit_oxygen
+  name: Suit oxygen warnings on foot
+  hint: Warn from an explicitly labelled personal suit or helmet oxygen percentage
+    on the FPS HUD. Ship life support, ambient O2 and unlabelled icons do not
+    establish suit oxygen. Uses the normal fresh-reading confirmations.
+  property_type: boolean
+  value: false
+  required: false
+- id: warn_hydration
+  name: Hydration warnings on foot
+  hint: Warn only from the player's exact hydration LOW or DANGEROUSLY LOW status
+    text on the FPS HUD. Recovery text clears the warning. Off by default; does
+    not change game controls.
+  property_type: boolean
+  value: false
+  required: false
+- id: warn_nutrition
+  name: Nutrition warnings on foot
+  hint: Warn only from the player's exact nutrition LOW or DANGEROUSLY LOW status
+    text on the FPS HUD. Recovery text clears the warning. Off by default; does
+    not change game controls.
+  property_type: boolean
+  value: false
+  required: false
+- id: warn_blood_loss
+  name: Blood loss warnings on foot
+  hint: Warn only from the player's exact BLOOD LOSS alert on the FPS HUD. Other players, NPCs, medical instructions and treatment text do not count. Off by default; does not change game controls.
+  property_type: boolean
+  value: false
+  required: false
+- id: warn_pressure
+  name: High pressure warnings on foot
+  hint: Warn only from the player's exact Warning high pressure! alert on the FPS HUD. Other subjects, ship consoles and outside conditions do not count. Off by default; does not change game controls.
+  property_type: boolean
+  value: false
+  required: false
+- id: suit_oxygen_low_percent
+  name: Suit oxygen low threshold (%)
+  hint: Used when suit oxygen warnings are enabled. Must be at least the shared
+    critical threshold. Does not change ship oxygen warnings or game controls.
+  property_type: number
+  value: 20
   required: false

@@ -35,8 +35,7 @@ def encode_capture(
     """Encode one captured PIL image using stock or bounded high-detail settings.
 
     The stock profile delegates the original object and encoder unchanged. The
-    high profile owns every copy and stream it creates and never mutates or closes
-    the captured image.
+    high profile borrows the capture and owns only its conversion or resize results.
     """
     if detail == "stock":
         return stock_encoder(image)
@@ -48,8 +47,7 @@ def encode_capture(
     owned: list[Image.Image] = []
     stream = io.BytesIO()
     try:
-        working = image.copy()
-        owned.append(working)
+        working = image
         if working.mode != "RGB":
             working = working.convert("RGB")
             owned.append(working)
@@ -61,5 +59,5 @@ def encode_capture(
         return base64.b64encode(stream.getvalue()).decode("ascii")
     finally:
         stream.close()
-        for owned_image in owned:
+        for owned_image in reversed(owned):
             owned_image.close()

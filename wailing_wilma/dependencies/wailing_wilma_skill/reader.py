@@ -8,6 +8,7 @@ import binascii
 import json
 import math
 import re
+import time
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 
@@ -28,12 +29,14 @@ class ReaderUnavailable(Exception):
         request_id=None,
         provider_code=None,
         provider_message=None,
+        context_exceeded=False,
     ):
         super().__init__(reason)
         self.http_status = http_status
         self.request_id = request_id
         self.provider_code = provider_code
         self.provider_message = provider_message
+        self.context_exceeded = context_exceeded
 
     def __str__(self):
         reason = super().__str__()
@@ -115,7 +118,9 @@ class ReaderSettings:
         if type(self.provider) is not str or self.provider not in {
             "wingman",
             "openrouter",
+            "ollama",
             "local",
+            "waterfall",
         }:
             raise ValueError("unsupported reader provider")
         if type(self.structured_output) is not bool or type(self.disable_reasoning) is not bool:
@@ -159,6 +164,11 @@ class ReaderSettings:
                 )
             ):
                 raise ValueError("invalid local endpoint")
+            if self.provider == "waterfall" and (
+                parsed.hostname not in {"127.0.0.1", "::1"}
+                or parsed.path.rstrip("/") not in {"/v1", "/v1/vision/chat/completions"}
+            ):
+                raise ValueError("Waterfall requires its same-machine vision endpoint")
         except ValueError:
             raise ValueError("invalid local endpoint") from None
 
@@ -192,6 +202,24 @@ def _pairs(pairs):
             raise ValueError("duplicate")
         result[key] = value
     return result
+
+
+def _ollama_context_exceeded(error):
+    """Recognize a typed context-limit response, including a wrapped runner error."""
+    if not isinstance(error, dict):
+        return False
+    if error.get("type") == "exceed_context_size_error" or error.get("code") == "context_length_exceeded":
+        return True
+    # Some Ollama versions return the runner's JSON as the outer error message.
+    message = error.get("message")
+    if not isinstance(message, str) or not message.lstrip().startswith("{"):
+        return False
+    try:
+        wrapped = json.loads(message, object_pairs_hook=_pairs)
+    except (ValueError, RecursionError):
+        return False
+    inner = wrapped.get("error") if isinstance(wrapped, dict) else None
+    return isinstance(inner, dict) and inner.get("type") == "exceed_context_size_error"
 
 
 async def read_image(
@@ -243,7 +271,7 @@ async def read_image(
         or any(ord(c) < 33 or ord(c) == 127 for c in api_key)
     ):
         raise ReaderUnavailable("invalid_credential")
-    if settings.provider == "openrouter" and api_key is None:
+    if settings.provider in {"openrouter", "waterfall"} and api_key is None:
         raise ReaderUnavailable("credential_unavailable")
     url = (
         OPENROUTER_URL
@@ -251,23 +279,30 @@ async def read_image(
         else (
             settings.endpoint.rstrip("/")
             if settings.endpoint.rstrip("/").endswith("/chat/completions")
-            else settings.endpoint.rstrip("/") + "/chat/completions"
+            else settings.endpoint.rstrip("/") + (
+                "/vision/chat/completions" if settings.provider == "waterfall"
+                else "/chat/completions"
+            )
         )
     )
     text_part = {"type": "text", "text": prompt}
     image_part = {"type": "image_url", "image_url": {"url": _image_url(image, max_request_bytes)}}
-    content = [image_part, text_part] if settings.provider == "local" else [text_part, image_part]
+    content = [text_part, image_part] if settings.provider == "openrouter" else [
+        image_part, text_part
+    ]
     body = {
         "model": settings.model,
         "messages": [{"role": "user", "content": content}],
         "max_tokens": 512,
         "stream": False,
     }
-    if settings.provider == "local":
+    if settings.provider in {"local", "ollama", "waterfall"}:
         body["temperature"] = 0
     if settings.disable_reasoning:
         if settings.provider == "openrouter":
             body["reasoning"] = {"effort": "none"}
+        elif settings.provider == "ollama":
+            body["reasoning_effort"] = "none"
         else:
             body["chat_template_kwargs"] = {"enable_thinking": False}
     if settings.structured_output:
@@ -280,6 +315,10 @@ async def read_image(
     headers = {"Content-Type": "application/json", "Accept-Encoding": "identity"}
     if api_key is not None:
         headers["Authorization"] = "Bearer " + api_key
+    if settings.provider == "waterfall":
+        headers["x-wingman-waterfall-frame-deadline-ns"] = str(
+            time.monotonic_ns() + int((deadline - loop.time()) * 1_000_000_000)
+        )
     if loop.time() >= deadline:
         raise ReaderUnavailable("deadline_exceeded")
     import httpx
@@ -290,7 +329,9 @@ async def read_image(
             async with factory(trust_env=False, follow_redirects=False, timeout=None) as client:
                 async with client.stream("POST", url, content=encoded, headers=headers) as response:
                     request_id = _safe_metadata(
-                        response.headers.get("x-request-id") or response.headers.get("request-id"),
+                        response.headers.get("x-request-id") or response.headers.get("request-id")
+                        or (response.headers.get("x-wingman-waterfall-request-id")
+                            if settings.provider == "waterfall" else None),
                         limit=128,
                         secret=api_key,
                         code=True,
@@ -309,6 +350,7 @@ async def read_image(
                             code=True,
                         )
                         provider_code = provider_message = None
+                        context_exceeded = False
                         try:
                             encoding = response.headers.get("content-encoding", "identity").lower()
                             length = response.headers.get("content-length")
@@ -325,6 +367,8 @@ async def read_image(
                             error_data = json.loads(error_body, object_pairs_hook=_pairs)
                             error = error_data.get("error") if type(error_data) is dict else None
                             if type(error) is dict:
+                                if settings.provider == "ollama" and status == 400:
+                                    context_exceeded = _ollama_context_exceeded(error)
                                 provider_code = _safe_metadata(
                                     error.get("code"), limit=128, secret=api_key, code=True
                                 )
@@ -339,7 +383,19 @@ async def read_image(
                             request_id=request_id,
                             provider_code=provider_code,
                             provider_message=provider_message,
+                            context_exceeded=context_exceeded,
                         )
+                    if settings.provider == "waterfall":
+                        if response.headers.get("x-wingman-waterfall-frame-deadline") != "applied":
+                            raise ReaderUnavailable("waterfall_frame_deadline_unsupported")
+                        route = _safe_metadata(
+                            response.headers.get("x-wingman-waterfall-route"),
+                            limit=128, secret=api_key, code=True,
+                        )
+                        if not route:
+                            raise ReaderUnavailable("waterfall_route_unavailable")
+                        if type(diagnostics) is dict:
+                            diagnostics["waterfall_route"] = route
                     if response.headers.get("content-encoding", "identity").lower() not in {
                         "",
                         "identity",

@@ -13,9 +13,10 @@ DEPENDENCIES = "dependencies/wailing_wilma_skill"
 SKILL_FILES = ("__init__.py", "main.py", "default_config.yaml", "logo.png")
 DEPENDENCY_FILES = (
     "__init__.py", "skill.py", "foreground.py", "image_encoding.py",
-    "policy.py", "preferences.py", "reader.py",
+    "policy.py", "preferences.py", "reader.py", "feedback.py", "prompt.py",
 )
-DOCUMENTATION = ("README.md", "LICENSE", "NOTICE.md", "docs/wilma-warning-flow.svg")
+DOCUMENTATION = ("README.md", "LICENSE", "NOTICE.md", "docs/wilma-warning-flow.svg",
+                 "docs/gameplay-tests.md", "docs/wilma-component-transfer.png")
 
 
 def build(destination: Path) -> dict:
@@ -23,20 +24,23 @@ def build(destination: Path) -> dict:
     if destination == ROOT or ROOT in destination.parents:
         raise ValueError("Use a new output folder outside the source checkout")
     files = {name: (SKILL / name).read_bytes() for name in SKILL_FILES}
+    config = files["default_config.yaml"]
+    match = re.search(rb"(?m)^version: ([0-9]+\.[0-9]+\.[0-9]+)\r?$", config)
+    if match is None:
+        raise ValueError("The skill configuration needs an explicit version")
+    version = match.group(1).decode("ascii")
+    namespace = "wailing_wilma_skill_v" + version.replace(".", "_")
     for name in DEPENDENCY_FILES:
-        path = f"{DEPENDENCIES}/{name}"
-        files[path] = (SKILL / path).read_bytes()
+        files[f"dependencies/{namespace}/{name}"] = (SKILL / DEPENDENCIES / name).read_bytes()
     for name in DOCUMENTATION:
         files[name] = (ROOT / name).read_bytes()
-
-    config = files["default_config.yaml"]
-    version = re.search(rb"(?m)^version: ([0-9]+\.[0-9]+\.[0-9]+)\r?$", config)
-    if version is None:
-        raise ValueError("The skill configuration needs an explicit version")
+    # Git worktrees on Windows and Linux must produce the same release archive.
+    files = {name: data if name.endswith(".png") else data.replace(b"\r\n", b"\n")
+             for name, data in files.items()}
     manifest = {
         "schema_version": 1,
         "name": "WailingWilma",
-        "version": version.group(1).decode("ascii"),
+        "version": version,
         "game_input": False,
         "files": {name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())},
     }
