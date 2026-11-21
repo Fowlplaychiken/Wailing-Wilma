@@ -1,7 +1,7 @@
 module: skills.wailing_wilma.main
 name: WailingWilma
 api_version: 3
-version: 0.1.79
+version: 0.1.80
 display_name: Wailing Wilma
 author: Star Citizen Computer project
 description:
@@ -312,6 +312,12 @@ custom_properties:
 - id: warn_pressure
   name: High pressure warnings on foot
   hint: Warn only from the player's exact Warning high pressure! alert on the FPS HUD. Other subjects, ship consoles and outside conditions do not count. Off by default; does not change game controls.
+  property_type: boolean
+  value: false
+  required: false
+- id: warn_incapacitation
+  name: Incapacitation warnings on foot
+  hint: Announce the exact You Are Incapacitated message on your own HUD. Off by default.
   property_type: boolean
   value: false
   required: false

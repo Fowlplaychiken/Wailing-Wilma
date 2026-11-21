@@ -17,7 +17,8 @@ PERCENT_CATEGORIES = {
 OTHER_CATEGORIES = {"power": "Power loss", "heat": "Overheating", "fire": "Fire",
                     "environment": "Environment", "emp": "Explicit EMP",
                     "hydration": "Hydration", "nutrition": "Nutrition",
-                    "blood_loss": "Blood loss", "pressure": "High pressure"}
+                    "blood_loss": "Blood loss", "pressure": "High pressure",
+                    "incapacitation": "Incapacitation"}
 
 
 @dataclass(frozen=True)
@@ -103,7 +104,7 @@ def read_preferences(get: Callable[[str], object]) -> Preferences:
         enabled = get(f"warn_{category}")
         if enabled is not None and type(enabled) is not bool:
             raise ValueError(f"Invalid Wailing Wilma setting: warn_{category}")
-        if category in {"hydration", "nutrition", "blood_loss", "pressure"}:
+        if category in {"hydration", "nutrition", "blood_loss", "pressure", "incapacitation"}:
             if enabled is True:
                 personal_status.add(category)
             # Keep this opt-in outside the legacy muted set. A missing property

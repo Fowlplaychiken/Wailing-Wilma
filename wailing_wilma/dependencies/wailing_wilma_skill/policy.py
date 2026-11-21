@@ -20,7 +20,8 @@ _PERCENT = frozenset({
     "armor_percent", "suit_oxygen_percent",
 })
 _PERSONAL_STATUS = frozenset({"personal_hydration_status", "personal_nutrition_status"})
-_PERSONAL_WARNINGS = frozenset({"personal_blood_loss_warning", "personal_high_pressure_warning"})
+_PERSONAL_WARNINGS = frozenset({"personal_blood_loss_warning", "personal_high_pressure_warning",
+                                "personal_incapacitated_warning"})
 _PERSONAL_READINGS = _PERSONAL_STATUS | _PERSONAL_WARNINGS
 _PERSONAL_STATUS_VALUES = frozenset({"low", "dangerously_low", "recovered"})
 _COCKPIT_BANNERS = {
@@ -37,7 +38,8 @@ _KINDS = _PERCENT | _BOOLEAN | _PERSONAL_STATUS
 _PERCENT_CATEGORIES = frozenset({
     "shields", "components", "fuel", "quantum_fuel", "life_support", "hull", "armor", "suit_oxygen",
 })
-_PERSONAL_STATUS_CATEGORIES = frozenset({"hydration", "nutrition", "blood_loss", "pressure"})
+_PERSONAL_STATUS_CATEGORIES = frozenset({"hydration", "nutrition", "blood_loss", "pressure",
+                                         "incapacitation"})
 _CATEGORIES = (_PERCENT_CATEGORIES | _PERSONAL_STATUS_CATEGORIES
                | frozenset({"power", "heat", "environment", "emp", "fire"}))
 _MAX_TEXT = 96_000
@@ -107,6 +109,7 @@ _PERSONAL_STATUS_EVIDENCE = {
 }
 _PERSONAL_WARNING_EVIDENCE = {
     "personal_blood_loss_warning": ("blood_loss", "blood loss", "blood loss"),
+    "personal_incapacitated_warning": ("incapacitation", "incapacitation", "you are incapacitated"),
     "personal_high_pressure_warning": ("pressure", "pressure", "warning high pressure!"),
 }
 _PERSONAL_HUD_ALERTS = {
@@ -865,8 +868,7 @@ class WilmaPolicy:
             "reactor_explosion_imminent_warning": "power",
             "personal_hydration_status": "hydration",
             "personal_nutrition_status": "nutrition",
-            "personal_blood_loss_warning": _PERSONAL_WARNING_EVIDENCE["personal_blood_loss_warning"][0],
-            "personal_high_pressure_warning": _PERSONAL_WARNING_EVIDENCE["personal_high_pressure_warning"][0],
+            **{kind: category for kind, (category, _, _) in _PERSONAL_WARNING_EVIDENCE.items()},
         }[kind]
 
     def _validate_reading(self, row: Reading) -> None:
@@ -933,6 +935,7 @@ class WilmaPolicy:
             text = {
                 "personal_blood_loss_warning": "Blood loss detected",
                 "personal_high_pressure_warning": "High pressure warning",
+                "personal_incapacitated_warning": "You are incapacitated",
             }[row.kind]
         elif row.kind in _PERCENT:
             value = float(row.value)
