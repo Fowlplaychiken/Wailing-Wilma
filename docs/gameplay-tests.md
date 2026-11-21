@@ -74,6 +74,24 @@ Eight reviewed checkpoints in a separate recording show two cockpit views, three
 
 The terminal reader specializes in engineering-console banners and returned unknown on these views. Qwen had no matched run here. The hardware figures above exclude electricity.
 
+## Reading the incapacitation banner at native resolution
+
+Two 1080p recordings from the same creator show how a faster reply can still miss a warning. One shows the player recovering Security Data. The other shows a different engagement while recovering Seismic Data five days later. Before reviewing the second recording, the test fixed a lower-left crop from the first recording. Every arm used the same two-second sampling schedule, three-second maximum frame age and two-confirmation policy. [Security Data at 24:27](https://www.youtube.com/watch?v=q2YFjZ6XW4s&t=1467s) · [Seismic Data at 28:38](https://www.youtube.com/watch?v=prbwG5SAzg8&t=1718s)
+
+| Reader | Security Data onset, 7 banner checks | First confirmed offer | Seismic Data onset, 3 banner checks | First confirmed offer |
+| --- | ---: | ---: | ---: | ---: |
+| Local Qwen3.5-4B, full frame and stock JPEG | 7/7 | 24:38.747 | 2/3 | None |
+| Same Qwen reader and prompt, native HUD crop | 4/7 | 24:42.354 | 2/3 | None |
+| Tesseract 5.5.4 on CPU, exact text line in the same crop | 7/7 | 24:37.245 | 3/3 | 28:56.234 |
+
+In Seismic Data the banner was absent at 28:52.500 and visible at 28:52.750. Both Qwen arms read it at 28:54 and 28:58 but missed it at 28:56, so the policy withheld the warning. Across ten matching frames, the crop’s median reply age was 0.771 s and stock’s was 1.160 s. Both stayed quiet on the seven comparable pre-banner checks. Stock withheld one earlier frame whose pixels differed. The crop and OCR stayed quiet on all eight.
+
+The CPU reader was tried **after** the Qwen results were known. Its first offer came 3.48–3.74 s after the banner appeared, using a second confirming frame that was 234 ms old. Median reply age was 253 ms. This diagnostic used a known personal HUD layout. An independent creator, a different layout and verified personal context are still needed before enabling it for players.
+
+Later in Security Data the banner remained visible through 25:34 and disappeared by 25:36. All three readers detected all nine visible-banner checks and stayed quiet on both subsequent checks. The camera changed and a clinic title followed. The footage establishes when the banner disappeared. Medical recovery remains unknown. All runs used local processing and silent policy replay, with $0 API charges. [Security Data at 25:18](https://www.youtube.com/watch?v=q2YFjZ6XW4s&t=1518s)
+
+A local text-only follow-up used the confirmed CPU warning. The player asked “Wilma, what does my suit say?” and received “Your suit says you are incapacitated.” Asked “Can you tell if help’s on the way?”, Wilma replied “I cannot tell if help is on the way.” A broader “what’s wrong with me?” question sometimes failed to report the known status. The test generated no speech audio and sent no game input.
+
 ## Personal warning false alarms
 
 In version 0.1.80, Wilma can announce **You Are Incapacitated** on foot. In one original 1080p recording, local Qwen3.5-4B Q4_K_M read the banner in all seven reviewed frames from 24:35 through 24:47. All four preceding frames stayed quiet for incapacitation. On an RTX 2080 Ti, all 11 matching frames returned within the 3 s deadline. Median reply age was 1.243 s and the slowest was 1.784 s. Replaying those responses with the default two confirmations offered a single warning at 24:38.747. The run used the stock Wingman encoder, cost $0 in API fees and exercised one previously reviewed incident. Live speech and results on new recordings remain open. [Onyx Facility at 24:35](https://www.youtube.com/watch?v=q2YFjZ6XW4s&t=1475s)
