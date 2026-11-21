@@ -19,7 +19,7 @@ The CPU reader submitted “Cooler failed” once. The fault was already on scre
 
 ## Cockpit, vehicle and on foot
 
-![Timeline of all 37 Inkling 2 Mini checks on moving cockpit footage.](inkling-mini-cockpit.svg)
+![Hosted Inkling cockpit timeline and a comparison with the local model on two matching frames.](inkling-mini-cockpit.svg)
 
 **Inkling 2 Mini via OpenRouter.** Wilma tested the hosted model against 36 seconds of 1440p cockpit gameplay with visible warnings. At one check per second, it returned **0 timely readings in 37 checks**. Thirteen requests reached the three-second deadline, 23 checks occurred while a request was in progress, and one capture was missed. Wilma submitted no warnings. The provider returned no usage on these requests, so cost and recognition accuracy on completed replies are unknown. [Source footage at 14:16](https://www.youtube.com/watch?v=eJoqjCmYYls&t=856s)
 
@@ -27,11 +27,14 @@ Follow-up requests used the same two video times. The captured pixels matched ac
 
 | Reader setting | Critical shield warning | Blank warning strip | Cost for both calls |
 | --- | --- | --- | ---: |
-| Default reasoning, 15 s limit | Truncated (3.64 s) | Truncated (12.33 s) | $0.00053652 |
-| Reasoning off, 15 s limit | Warning missed (2.36 s) | Quiet (1.85 s) | $0.00026492 |
-| Reasoning off, 3 s limit | Expired (3.02 s) | Quiet (1.66 s) | At least $0.00031150 |
+| Hosted default reasoning, 15 s limit | Truncated (3.64 s) | Truncated (12.33 s) | $0.00053652 |
+| Hosted reasoning off, 15 s limit | Warning missed (2.36 s) | Quiet (1.85 s) | $0.00026492 |
+| Hosted reasoning off, 3 s limit | Expired (3.02 s) | Quiet (1.66 s) | At least $0.00031150 |
+| Local IQ4_NL, reasoning off, 15 s limit | Expired (15.10 s) | Expired (15.01 s) | $0 API |
 
-Disabling extra reasoning produced shorter, readable responses. Wilma recognized the cockpit and accepted no instrument readings from either view. The critical warning was missed even on the completed 2.36-second reply. The three-second repeat expired on that same warning. One blank strip cannot establish a false-alarm rate.
+The local test used a GeForce RTX 2080 Ti (11 GiB) and a Core i7-10700K. Both requests timed out before the reader returned an answer, so recognition accuracy is unknown. Electricity is excluded from the API cost.
+
+On the hosted service, disabling extra reasoning produced shorter, readable responses. Wilma recognized the cockpit and accepted no instrument readings from either view. The critical warning was missed even on the completed 2.36-second reply. The three-second repeat expired on that same warning. One blank strip cannot establish a false-alarm rate.
 
 Eight reviewed checkpoints in a separate recording show two cockpit views, three on foot and three from an ATLS vehicle. Here the task was identifying the viewpoint. All three readers returned zero accepted instrument readings. [Watch the Aberdeen recording](https://www.youtube.com/watch?v=FtvXIOjns90)
 
