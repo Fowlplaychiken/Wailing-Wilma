@@ -56,12 +56,14 @@ def build_reader(destination: Path) -> dict:
         "tools/setup_wilma_terminal_ocr.py", "adapters/__init__.py", "adapters/perception/__init__.py",
         "adapters/perception/image_bounds.py", "adapters/perception/native_regions.py",
         "adapters/perception/tesseract.py", "adapters/perception/tesseract_artifacts.py",
-        "adapters/perception/wilma_terminal_ocr.py", "adapters/runtime_updates/__init__.py",
+        "adapters/perception/wilma_terminal_ocr.py", "adapters/perception/wilma_personal_ocr.py",
+        "adapters/runtime_updates/__init__.py",
         "adapters/runtime_updates/file_reads.py", "integrations/__init__.py",
         "integrations/wingman_wilma/__init__.py", "integrations/wingman_wilma/terminal_panel.py",
     )
     files = {name: (root / name).read_bytes() for name in names}
-    files["integrations/wingman_wilma/policy.py"] = (SKILL / DEPENDENCIES / "policy.py").read_bytes()
+    for name in ("policy.py", "prompt.py"):
+        files["integrations/wingman_wilma/" + name] = (SKILL / DEPENDENCIES / name).read_bytes()
     files["LICENSE"] = (ROOT / "LICENSE").read_bytes()
     files = {name: data.replace(b"\r\n", b"\n") for name, data in files.items()}
     return write_archive(destination, "wilma-terminal-ocr", release_version(), files, zipfile.ZIP_DEFLATED)
