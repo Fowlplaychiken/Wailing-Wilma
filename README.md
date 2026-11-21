@@ -2,16 +2,18 @@
 
 ![Wailing Wilma watches the visible ship display, checks fresh readings, and speaks through Wingman.](docs/wilma-warning-flow.svg)
 
-Wailing Wilma is a community skill for Wingman AI. It reads visible Star Citizen ship displays and calls out conditions such as low rear shields, critical hull damage, overheating, or a fire warning. You can use it by voice or in Wingman chat.
+Wailing Wilma watches the ship display you can already see and calls out fresh warnings through Wingman. Ask for a status check, mute a category, or let it monitor while you fly. It sends no game input.
 
-**Early preview.** This build has been loaded in Wingman on Windows. Accuracy across different ships and displays, warning timing in combat, and impact on game performance still need representative testing. Keep using the game's instruments and alarms.
+**[Download Wailing Wilma](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/latest)**
+
+> **Early preview:** Loaded in Wingman on Windows. Accuracy across ships and displays, warning timing in combat, and game performance still need representative testing. Keep using the game's instruments and alarms.
 
 ## Install
 
-1. On [Releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases), expand **Assets** and download the `wailing_wilma-*.zip` skill. Use that file instead of the automatic source archive.
+1. Download the `wailing_wilma-*.zip` skill from [Releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases). Use the ZIP under **Assets**, not the automatic source archive.
 2. Quit Wingman. Extract the ZIP into `%APPDATA%\ShipBit\WingmanAI\custom_skills`. The resulting path should end in `custom_skills\wailing_wilma\default_config.yaml`.
 3. Open Wingman. In your Wingman's skill settings, make **Wailing Wilma** discoverable. Configure an image-capable model in Wingman, or choose a separate reader in Wilma's settings.
-4. Put Star Citizen in front, show a ship display, and ask **“Start Wailing Wilma.”** Ask **“Wailing Wilma status”** to see what it can currently read.
+4. Bring Star Citizen to the foreground, show a readable ship display, and say **“Start Wailing Wilma.”** Ask **“Wailing Wilma status”** to see what it can read.
 
 A Windows PC running Star Citizen and Wingman with the v3 skill API is required. Monitoring starts when you ask. Wilma uses Wingman's voice and sends no game input. No tablet, GameGlass, or Core edits are needed.
 
