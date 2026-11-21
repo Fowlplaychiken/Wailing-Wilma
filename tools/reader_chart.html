@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wailing Wilma gameplay benchmarks</title>
+<style>
+:root{color-scheme:dark;--paper:#101b24;--panel:#172630;--ink:#f2f5ef;--muted:#b1c1c5;--rule:#3b5059;--mint:#86dfbe;--sky:#9bcaf5;--amber:#ffd495}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:40px 28px 64px}h1,h2,h3,p{margin:0 0 .45em}h1{font-size:clamp(30px,5vw,52px);line-height:1.12;letter-spacing:-.035em}h2{font-size:26px;line-height:1.2}h3{font-size:17px}header>p,.hint,small,dt{color:var(--muted)}header{border-bottom:1px solid var(--rule);padding-bottom:24px}section{padding-top:28px}button,input,select{font:inherit;color:var(--ink);border:1px solid var(--rule);border-radius:5px;background:var(--panel);padding:6px 11px}button{cursor:pointer}button[aria-pressed=true]{background:var(--mint);color:#102921;border-color:var(--mint)}:focus-visible{outline:3px solid var(--amber);outline-offset:2px}.controls,.options{display:flex;align-items:end;flex-wrap:wrap;gap:10px}.options{margin:12px 0 18px}.chart{background:var(--panel);border-radius:7px;padding:22px}.group+.group{padding-top:15px;border-top:1px solid var(--rule);margin-top:15px}.barrow{display:grid;grid-template-columns:minmax(140px,210px) minmax(70px,1fr) minmax(76px,115px) 85px;gap:12px;align-items:center;margin:7px 0}.bar{background:#2e404a;height:10px;border-radius:2px;overflow:hidden}.fill{height:100%}.value,.time{font-variant-numeric:tabular-nums}.time{text-align:right}.caption{font-size:.88rem;margin:15px 0 0;color:var(--muted)}label{display:grid;gap:3px;color:var(--muted);font-size:.88rem}#search{width:min(330px,80vw)}#count{margin:12px 0}.item{border-top:1px solid var(--rule)}summary{cursor:pointer;padding:12px 0;color:var(--ink)}.model{font-weight:650}.subtitle{display:block;color:var(--muted);padding-left:18px;font-size:.92rem}dl{display:grid;grid-template-columns:150px 1fr;gap:4px 16px;margin:0 0 17px 18px}.item dd{margin:0;overflow-wrap:anywhere}a{color:var(--sky)}footer{margin:24px 0 0;color:var(--muted);font-size:.85rem}.legend-head{font-size:.82rem;color:var(--muted)}[hidden]{display:none!important}@media(max-width:620px){main{padding:22px 14px}.chart{padding:12px}.barrow{grid-template-columns:minmax(96px,1.3fr) minmax(28px,.7fr) 69px 50px;gap:5px;font-size:.88rem}dl{grid-template-columns:1fr}dd{margin-bottom:5px!important}}
+</style></head>
+<body><main><header><h1>Wailing Wilma gameplay benchmarks</h1><p>Star Citizen video replay · Reader accuracy, response time and API cost</p></header>
+<section aria-labelledby="comparison"><h2 id="comparison">Matched comparisons</h2>
+<div class="options"><button id="viewpoint" aria-pressed="true">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button></div>
+<div class="chart"><p id="definition"></p><div class="barrow legend-head"><span>Reader</span><span></span><span>Correct</span><span class="time">Median¹</span></div><div id="bars"></div>
+<p id="caption" class="caption"></p></div></section>
+<section aria-labelledby="all"><h2 id="all">All trials and coverage</h2><p class="hint">Open a result for its scoring rule, hardware, costs and evidence.</p>
+<div class="controls"><label>Find a model, source or task<input type="search" id="search" placeholder="e.g. Jev, fuel or Qwen"></label>
+<label>Records<select id="type"><option value="">All records</option><option value="experiment">Experiments</option><option value="paced_replay">Paced replays</option><option value="candidate">Model candidates</option><option value="coverage_arm">Planned comparisons</option><option value="screen_family">Display coverage</option></select></label></div>
+<p id="count" role="status"></p><div id="results"></div><button id="more" hidden>Show more results</button></section>
+<footer>Source data revision __LEDGER_SHA__ · <a href="https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/reader-trials.csv">Current CSV</a> · <a href="https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/gameplay-tests.md">Gameplay test notes</a></footer></main>
+<script id="data" type="application/json">__LEDGER_JSON__</script><script>
+"use strict";
+const rows = JSON.parse(document.getElementById("data").textContent);
+const byId = new Map(rows.filter(r=>r.record_type==="experiment").map(r=>[r.id,r]));
+const id = name => document.getElementById(name);
+function node(tag, text, cls) {
+  const el = document.createElement(tag);
+  if (text !== undefined) el.textContent = text;
+  if (cls) el.className = cls;
+  return el;
+}
+const panels = {
+  viewpoint: {
+    text:"How often did Qwen3.5-4B identify the player’s viewpoint within three seconds?",
+    names:["Stock image","1024 × 576"],
+    groups:[["ROC driver","nov21-qwen-roc-stock","nov21-pair-roc-1024"],["Pitbull pilot","nov21-qwen-pitbull-stock","nov21-pair-ship-1024"],["Mining on foot","nov21-qwen-hand-mining-stock","nov21-pair-fps-1024"]],
+    den:"offered_frames",
+    caption:"¹ Median from capture to a timely reply. Each row covers 11 scheduled checks at 1440p. Busy and expired checks count against accuracy. RTX 2080 Ti, 11 GiB, Core i7-10700K. Local processing, $0 API fees."
+  },
+  banner: {
+    text:"How often did the reader identify the visible “You Are Incapacitated” banner?",
+    names:["Qwen, full frame","Qwen, HUD crop","Tesseract, HUD crop"],
+    groups:[["Security Data · warning onset","nov21-pair-onyx-stock","nov21-banner-training-region","nov21-banner-training-ocr"],["Seismic Data · warning onset","nov21-banner-fresh-stock","nov21-banner-fresh-region","nov21-banner-fresh-ocr"]],
+    den:"scored_count",
+    caption:"¹ Median capture-to-reply on timely checks. Accuracy covers visible positive frames at 1080p. Two recordings from one creator. No live speech was measured. Qwen3.5-4B used an RTX 2080 Ti, Tesseract 5.5.4 used a Core i7-10700K. $0 API fees."
+  }
+};
+function draw(key) {
+  const p = panels[key], colors=["var(--sky)","var(--mint)","var(--amber)"];
+  Object.keys(panels).forEach(k=>id(k).setAttribute("aria-pressed",k===key));
+  id("definition").textContent=p.text; id("caption").textContent=p.caption;
+  const groups=[];
+  for (const [title,...ids] of p.groups) {
+    const group=node("div",undefined,"group"); group.append(node("h3",title));
+    ids.forEach((key,i)=>{
+      const item=byId.get(key); if(!item) return;
+      const box=node("div",undefined,"barrow"), track=node("div",undefined,"bar");
+      const n=Number(item.correct_count), d=Number(item[p.den]), pc=Math.round(n/d*100);
+      const fill=node("div",undefined,"fill"); fill.style.width=pc+"%"; fill.style.background=colors[i]; track.append(fill);
+      box.append(node("span",p.names[i]), track,node("span",n+"/"+d+" · "+pc+"%","value"), node("span",(Number(item.latency_ms)/1000).toFixed(2)+" s","time"));
+      group.append(box);
+    });
+    groups.push(group);
+  }
+  id("bars").replaceChildren(...groups);
+}
+const types={experiment:"Experiment",paced_replay:"Paced replay",candidate:"Model candidate",coverage_arm:"Planned comparison",screen_family:"Display coverage"};
+const fields=[["provider","Provider or hardware"],["arm","Configuration"],["status","Status"],["input_id","Input"],["screen_family","Display"],["accuracy_percent","Accuracy (%)"],["correct_count","Correct"],["scored_count","Scored"],["accuracy_metric","Scoring rule"],["accuracy_status","Accuracy evidence"],["latency_ms","Latency (ms)"],["latency_scope","Latency definition"],["cost_usd","Reported cost ($)"],["cost_basis","Cost basis"],["estimated_hourly_usd","Est. cost per hour ($)"],["requests_per_hour","Requests per hour"],["n","Sample count"],["offered_frames","Scheduled frames"],["timely_frames","Timely frames"],["vision_requests","Vision requests"],["declared_source_groups","Source groups"],["independent_groups","Independent groups"],["findings","Findings"],["reference_quality","Ground truth"],["permutation","Combination"],["pilot_status","Pilot"],["pilot_experiment_ids","Related trials"],["holdout_status","Held-out test"],["coverage_status","Coverage"],["required","Required"],["coverage_summary","Coverage detail"],["benchmark_evidence","Evidence"],["source_url","Source"],["id","Record ID"]];
+const searchable=rows.map(r=>Object.values(r).join(" ").toLowerCase());
+function result(row) {
+  const item=node("details",undefined,"item"), summary=node("summary");
+  summary.append(node("span",row.model||row.screen_family||row.id,"model"),node("span", [types[row.record_type],row.arm||row.status].filter(Boolean).join(" · "),"subtitle"));
+  item.append(summary);
+  item.addEventListener("toggle",()=>{
+    if(!item.open||item.children.length>1) return;
+    const dl=node("dl");
+    for(const [field,label] of fields){
+      if(!row[field]) continue;
+      const dd=node("dd",row[field]);
+      if(field==="source_url" && /^https?:\/\//i.test(row[field])){const link=node("a",row[field]);link.href=row[field];dd.replaceChildren(link);}
+      dl.append(node("dt",label),dd);
+    }
+    item.append(dl);
+  });
+  return item;
+}
+let matches=[], shown=0;
+function add(){
+  const batch=matches.slice(shown,shown+30); shown+=batch.length; id("results").append(...batch.map(result));
+  id("more").hidden=shown>=matches.length; id("count").textContent=matches.length+" records · "+shown+" shown";
+}
+function filter(){
+  const terms=id("search").value.trim().toLowerCase().split(/\s+/).filter(Boolean), kind=id("type").value;
+  matches=rows.filter((r,i)=>(!kind||r.record_type===kind)&&terms.every(term=>searchable[i].includes(term)));
+  id("results").replaceChildren(); shown=0; add();
+}
+for(const key of Object.keys(panels)) id(key).addEventListener("click",()=>draw(key));
+id("search").addEventListener("input",filter); id("type").addEventListener("change",filter); id("more").addEventListener("click",add);
+draw("viewpoint"); filter();
+</script></body></html>
