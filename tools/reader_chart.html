@@ -36,9 +36,9 @@ const panels = {
   banner: {
     text:"How often did the reader identify the visible “You Are Incapacitated” banner?",
     names:["Qwen, full frame","Qwen, HUD crop","Tesseract, HUD crop"],
-    groups:[["Security Data · warning onset","nov21-pair-onyx-stock","nov21-banner-training-region","nov21-banner-training-ocr"],["Seismic Data · warning onset","nov21-banner-fresh-stock","nov21-banner-fresh-region","nov21-banner-fresh-ocr"]],
+    groups:[["Security Data · warning onset","nov21-pair-onyx-stock","nov21-banner-training-region","nov21-banner-training-ocr"],["Seismic Data · warning onset","nov21-banner-fresh-stock","nov21-banner-fresh-region","nov21-banner-fresh-ocr"],["Boarding exercise · warning already visible",null,null,"nov21-boarding-released-ocr"]],
     den:"scored_count",
-    caption:"¹ Median capture-to-reply on timely checks. Accuracy covers visible positive frames at 1080p. Two recordings from one creator. No live speech was measured. Qwen3.5-4B used an RTX 2080 Ti, Tesseract 5.5.4 used a Core i7-10700K. $0 API fees."
+    caption:"¹ Median capture-to-reply on timely checks. Security and Seismic Data are two 1080p recordings from one creator. Boarding is a second creator at 1440p. Accuracy covers reviewed frames with a visible warning. No live speech was measured. Qwen3.5-4B used an RTX 2080 Ti, Tesseract 5.5.4 used a Core i7-10700K. $0 API fees."
   }
 };
 function draw(key) {
