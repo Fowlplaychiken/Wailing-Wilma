@@ -19,6 +19,10 @@ The CPU reader submitted “Cooler failed” once. The fault was already on scre
 
 ## Cockpit, vehicle and on foot
 
+![Timeline of all 37 Inkling 2 Mini checks on moving cockpit footage.](inkling-mini-cockpit.svg)
+
+**Inkling 2 Mini via OpenRouter.** Wilma tested the hosted model against 36 seconds of 1440p cockpit gameplay with visible warnings. At one check per second, it returned **0 timely readings in 37 checks**. Thirteen requests reached the three-second deadline, 23 checks occurred while a request was in progress, and one capture was missed. Wilma submitted no warnings. The provider returned no usage on these requests, so cost and recognition accuracy on completed replies are unknown. [Source footage at 14:16](https://www.youtube.com/watch?v=eJoqjCmYYls&t=856s)
+
 Eight reviewed checkpoints in a separate recording show two cockpit views, three on foot and three from an ATLS vehicle. Here the task was identifying the viewpoint. All three readers returned zero accepted instrument readings. [Watch the Aberdeen recording](https://www.youtube.com/watch?v=FtvXIOjns90)
 
 | Reader | Correct viewpoint by deadline | Median completed reply age | Reported API charge for this run |

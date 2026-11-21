@@ -16,7 +16,7 @@ DEPENDENCY_FILES = (
     "policy.py", "preferences.py", "reader.py", "feedback.py", "prompt.py",
 )
 DOCUMENTATION = ("README.md", "LICENSE", "NOTICE.md", "docs/wilma-warning-flow.svg",
-                 "docs/gameplay-tests.md", "docs/wilma-component-transfer.png")
+                 "docs/gameplay-tests.md", "docs/wilma-component-transfer.png", "docs/inkling-mini-cockpit.svg")
 
 
 def release_version() -> str:
