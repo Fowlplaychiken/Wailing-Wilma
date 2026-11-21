@@ -1,8 +1,22 @@
 # Gameplay tests
 
-These runs used real gameplay playing at normal speed at 2560 × 1440. Reviewers checked the visible HUD before comparing model replies. The deadline was three seconds per frame. Recognizing the viewpoint, reading a gauge and hearing an alert are measured separately.
+These runs used real gameplay at normal speed. The tests used 2560 × 1440 unless a result specifies another resolution. Reviewers checked the visible HUD before comparing model replies. The deadline was three seconds per frame unless stated otherwise.
 
 The [full comparison data](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/reader-trials.csv) includes local and hosted models, OCR and Jev trials, hardware, available costs, denominators and cases still awaiting a run. Compare rows with the same task and source. A planned run has no score.
+
+## Local reader across three viewpoints
+
+With Wilma 0.1.80’s stock Wingman image encoding, local Qwen3.5-4B Q4_K_M identified the correct viewpoint in 9 of 33 scheduled checks. Ten replies arrived within three seconds. The one wrong reply classified a close-up of the player’s handheld mining tool as an engineering terminal.
+
+| Reviewed view, 11 scheduled checks each | Correct view by deadline | Timely replies | Expired requests | Checks while busy | Median age of timely replies |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Greycat ROC driver | 2/11 | 2 | 4 | 5 | 2.570 s |
+| Drake Pitbull pilot | 1/11 | 1 | 5 | 5 | 2.987 s |
+| Player mining by hand | 6/11 | 7 | 0 | 4 | 2.410 s |
+
+Each original 2026 recording played for 20 seconds at 1× and 2560 × 1440. The scene was reviewed before inference at two-second intervals. All 33 native frame hashes matched on replay. Tests used the same general prompt on a GeForce RTX 2080 Ti (11 GiB) and Core i7-10700K, with $0 in API fees. Wilma accepted one ship fuel reading. This test scored only the viewpoint, so fuel accuracy, warning detection and audible delivery remain unmeasured. [ROC at 22:36](https://www.youtube.com/watch?v=zf5IcLx8ZOc&t=1356s) · [Pitbull at 2:27](https://www.youtube.com/watch?v=JGn9ezngXVc&t=147s) · [Hand mining at 12:32](https://www.youtube.com/watch?v=jXnK4j3vjEI&t=752s)
+
+On the same ROC frames, forcing High image detail returned HTTP 400 on all 11 requests, leaving scene accuracy unscored. On a repeat, Wilma’s reader identified the first High request as exceeding the model context. Switching to stock encoding on subsequent frames produced three timely correct views, two expired requests and five busy checks. The three replies had a median age of 2.980 s. Both ROC encodings and the repeat yielded zero accepted gauges.
 
 ## Engineering terminal
 
