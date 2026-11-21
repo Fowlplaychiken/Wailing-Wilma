@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="350" viewBox="0 0 880 350" role="img" aria-labelledby="title desc">
+<title id="title">Inkling 2 Mini returned zero timely readings in 37 checks</title>
+<desc id="desc">With default reasoning, 13 requests expired, 23 checks had a request already in progress and one capture was missed. No warning was submitted. In two follow-up views with reasoning off, the completed critical shield frame was missed and the blank strip stayed quiet.</desc>
+<rect width="880" height="350" rx="12" fill="#101d2b"/>
+<g font-family="system-ui, sans-serif" fill="#f1f6fb">
+<text x="28" y="39" font-weight="700" font-size="25">Inkling 2 Mini · cockpit warning test</text>
+<text x="28" y="68" fill="#c5d6e7" font-size="17">Default reasoning · 0 of 37 checks returned a reading within 3 seconds</text>
+<rect x="28" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 1: expired</title></rect>
+<rect x="50" y="91" width="17" height="30" rx="3" fill="#bd9fe3"><title>Check 2: capture missed</title></rect>
+<rect x="72" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 3: reader busy</title></rect>
+<rect x="94" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 4: expired</title></rect>
+<rect x="116" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 5: reader busy</title></rect>
+<rect x="138" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 6: reader busy</title></rect>
+<rect x="160" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 7: expired</title></rect>
+<rect x="182" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 8: reader busy</title></rect>
+<rect x="204" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 9: reader busy</title></rect>
+<rect x="226" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 10: expired</title></rect>
+<rect x="248" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 11: reader busy</title></rect>
+<rect x="270" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 12: reader busy</title></rect>
+<rect x="292" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 13: expired</title></rect>
+<rect x="314" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 14: reader busy</title></rect>
+<rect x="336" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 15: reader busy</title></rect>
+<rect x="358" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 16: expired</title></rect>
+<rect x="380" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 17: reader busy</title></rect>
+<rect x="402" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 18: reader busy</title></rect>
+<rect x="424" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 19: expired</title></rect>
+<rect x="446" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 20: reader busy</title></rect>
+<rect x="468" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 21: reader busy</title></rect>
+<rect x="490" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 22: expired</title></rect>
+<rect x="512" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 23: reader busy</title></rect>
+<rect x="534" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 24: reader busy</title></rect>
+<rect x="556" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 25: expired</title></rect>
+<rect x="578" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 26: reader busy</title></rect>
+<rect x="600" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 27: reader busy</title></rect>
+<rect x="622" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 28: expired</title></rect>
+<rect x="644" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 29: reader busy</title></rect>
+<rect x="666" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 30: reader busy</title></rect>
+<rect x="688" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 31: expired</title></rect>
+<rect x="710" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 32: reader busy</title></rect>
+<rect x="732" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 33: reader busy</title></rect>
+<rect x="754" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 34: expired</title></rect>
+<rect x="776" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 35: reader busy</title></rect>
+<rect x="798" y="91" width="17" height="30" rx="3" fill="#7296ba"><title>Check 36: reader busy</title></rect>
+<rect x="820" y="91" width="17" height="30" rx="3" fill="#fcac69"><title>Check 37: expired</title></rect>
+<text x="28" y="144" fill="#b9cadd" font-size="14">14:16</text>
+<text x="839" y="144" text-anchor="end" fill="#b9cadd" font-size="14">14:52 game footage</text>
+<rect x="28" y="171" width="14" height="14" rx="2" fill="#fcac69"/>
+<text x="51" y="184" font-size="16">13 requests timed out</text>
+<rect x="305" y="171" width="14" height="14" rx="2" fill="#7296ba"/>
+<text x="328" y="184" font-size="16">23 checks while busy</text>
+<rect x="600" y="171" width="14" height="14" rx="2" fill="#bd9fe3"/>
+<text x="623" y="184" font-size="16">1 missed capture</text>
+<path d="M28 207H852" stroke="#435465"/>
+<text x="28" y="237" font-size="18" font-weight="700">Reasoning off · same two frames tested at both deadlines</text>
+<text x="28" y="265" font-size="16">Critical shield banner</text>
+<text x="229" y="265" font-size="16" fill="#fcac69">Missed in 2.36 s with 15 s allowed. Expired with 3 s allowed.</text>
+<text x="28" y="292" font-size="16">Blank warning strip</text>
+<text x="229" y="292" font-size="16" fill="#b1dfd0">Stayed quiet in 1.85 s and 1.66 s, respectively.</text>
+<text x="28" y="326" font-size="14" fill="#c5d6e7">One 1440p cockpit recording · 21 November 2026 · OpenRouter · Wingman stock image encoding</text>
+</g>
+</svg>

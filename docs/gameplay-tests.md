@@ -19,6 +19,20 @@ The CPU reader submitted “Cooler failed” once. The fault was already on scre
 
 ## Cockpit, vehicle and on foot
 
+![Timeline of all 37 Inkling 2 Mini checks on moving cockpit footage.](inkling-mini-cockpit.svg)
+
+**Inkling 2 Mini via OpenRouter.** Wilma tested the hosted model against 36 seconds of 1440p cockpit gameplay with visible warnings. At one check per second, it returned **0 timely readings in 37 checks**. Thirteen requests reached the three-second deadline, 23 checks occurred while a request was in progress, and one capture was missed. Wilma submitted no warnings. The provider returned no usage on these requests, so cost and recognition accuracy on completed replies are unknown. [Source footage at 14:16](https://www.youtube.com/watch?v=eJoqjCmYYls&t=856s)
+
+Follow-up requests used the same two video times. The captured pixels matched across settings. At 14:27 the player's HUD showed a critical shield warning. At 14:31 the warning strip was blank. The earlier review recorded the video times without saving pixel hashes.
+
+| Reader setting | Critical shield warning | Blank warning strip | Cost for both calls |
+| --- | --- | --- | ---: |
+| Default reasoning, 15 s limit | Truncated (3.64 s) | Truncated (12.33 s) | $0.00053652 |
+| Reasoning off, 15 s limit | Warning missed (2.36 s) | Quiet (1.85 s) | $0.00026492 |
+| Reasoning off, 3 s limit | Expired (3.02 s) | Quiet (1.66 s) | At least $0.00031150 |
+
+Disabling extra reasoning produced shorter, readable responses. Wilma recognized the cockpit and accepted no instrument readings from either view. The critical warning was missed even on the completed 2.36-second reply. The three-second repeat expired on that same warning. One blank strip cannot establish a false-alarm rate.
+
 Eight reviewed checkpoints in a separate recording show two cockpit views, three on foot and three from an ATLS vehicle. Here the task was identifying the viewpoint. All three readers returned zero accepted instrument readings. [Watch the Aberdeen recording](https://www.youtube.com/watch?v=FtvXIOjns90)
 
 | Reader | Correct viewpoint by deadline | Median completed reply age | Reported API charge for this run |
