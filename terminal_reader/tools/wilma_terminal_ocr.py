@@ -23,6 +23,7 @@ import time
 import uuid
 from contextlib import asynccontextmanager
 from io import BytesIO
+from itertools import combinations
 from pathlib import Path
 from typing import Any
 
@@ -33,7 +34,9 @@ if str(PROJECT_ROOT) not in sys.path:
 from adapters.perception.image_bounds import MAX_SUPPORTED_CAPTURE_PIXELS
 from adapters.perception.tesseract import TesseractRecognizer, TesseractUnavailable
 from adapters.perception.tesseract_artifacts import TesseractArtifactAdmission
+from adapters.perception.wilma_personal_ocr import read_personal_banner
 from adapters.perception.wilma_terminal_ocr import read_native_frame
+from integrations.wingman_wilma.prompt import build_prompt
 from integrations.wingman_wilma.terminal_panel import native_reactor_reply
 from PIL import Image, UnidentifiedImageError
 from starlette.applications import Starlette
@@ -50,6 +53,15 @@ REQUEST_TIMEOUT_SECONDS = 3.0
 UNKNOWN_REPLY = '{"scene":"unknown","readings":[]}'
 _JPEG_PREFIX = "data:image/jpeg;base64,"
 _PERSONAL_PROMPT = "read only the player's own visible personal status"
+_PERSONAL_METRICS = ("suit_oxygen", "hydration", "nutrition")
+# The skill sends these only for focused on-foot HUD reading. Several banner
+# categories share a transcription prompt; Wilma enforces the selected warnings.
+_BANNER_PROMPTS = frozenset(
+    build_prompt(("incapacitation", *metrics))
+    for count in range(len(_PERSONAL_METRICS) + 1)
+    for metrics in combinations(_PERSONAL_METRICS, count)
+)
+_INCAPACITATED_REPLY = '{"scene":"fps","readings":[],"hud_alerts":["You Are Incapacitated"]}'
 _BEARER = re.compile(r"Bearer ([\x21-\x7e]{1,512})\Z", re.ASCII)
 
 
@@ -189,6 +201,7 @@ def create_app(
     model: str = DEFAULT_MODEL,
     api_key: str | None = None,
     request_timeout_seconds: float = REQUEST_TIMEOUT_SECONDS,
+    personal_incapacitation: bool = False,
 ) -> Starlette:
     """Create the ASGI app around an already receipt-admitted recognizer.
 
@@ -203,6 +216,7 @@ def create_app(
                 or not api_key.isascii()
                 or any(ord(char) < 33 or ord(char) > 126 for char in api_key)
             ))
+            or type(personal_incapacitation) is not bool
             or type(request_timeout_seconds) not in (int, float)
             or not 0 < request_timeout_seconds <= 30):
         raise ValueError("invalid server configuration")
@@ -240,14 +254,20 @@ def create_app(
             async with asyncio.timeout(request_timeout_seconds):
                 payload = _parse_json(await _read_body(request))
                 prompt, encoded_image = _user_parts(payload, model)
-                if _PERSONAL_PROMPT in prompt.casefold():
+                banner_prompt = prompt in _BANNER_PROMPTS
+                personal = banner_prompt or _PERSONAL_PROMPT in prompt.casefold()
+                if personal and not (personal_incapacitation and banner_prompt):
                     return JSONResponse(_completion(UNKNOWN_REPLY, model))
                 image = _decode_jpeg(encoded_image)
                 try:
-                    reading = await read_native_frame(image, recognizer, native_band=True)
+                    if personal:
+                        active = await read_personal_banner(image, recognizer)
+                        reply = _INCAPACITATED_REPLY if active else UNKNOWN_REPLY
+                    else:
+                        reading = await read_native_frame(image, recognizer, native_band=True)
+                        reply = native_reactor_reply(reading)
                 finally:
                     image.close()
-                reply = native_reactor_reply(reading)
                 return JSONResponse(_completion(reply, model))
         except _RequestError as exc:
             return JSONResponse({"error": {"message": exc.code, "type": "invalid_request_error",
@@ -295,6 +315,8 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--api-key-env", metavar="NAME",
                         help="environment variable containing the bearer key")
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--personal-incapacitation", action="store_true",
+                        help="also read the incapacitation banner on focused personal HUD requests")
     parser.add_argument("--request-timeout", type=float, default=REQUEST_TIMEOUT_SECONDS)
     return parser
 
@@ -325,6 +347,7 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError) as exc:
         raise SystemExit(f"selected native OCR artifact is unavailable: {exc}") from None
     app = create_app(recognizer, model=args.model, api_key=api_key,
+                     personal_incapacitation=args.personal_incapacitation,
                      request_timeout_seconds=args.request_timeout)
     import uvicorn
 

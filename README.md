@@ -37,7 +37,7 @@ By default, Wilma looks for two fresh readings before speaking. Glare, small tex
 | --- | --- |
 | **Wingman’s configured model** | Uses your Wingman’s existing vision setup. |
 | **Ollama** or **OpenAI-compatible server** | Enter the image-capable model’s name and the server’s `/v1` address. On a second PC, use that PC’s reachable address. |
-| **Engineering terminal OCR** | Choose **OpenAI-compatible server** and model `wilma-terminal-ocr` to read component failure banners and reactor countdowns on a CPU. [Download reader](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/terminal-ocr-v0.1.79/wilma-terminal-ocr-0.1.79.zip) · [Setup](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/terminal_reader/README.md) |
+| **Local CPU reader** | Choose **OpenAI-compatible server** and model `wilma-terminal-ocr` for engineering component failures and reactor countdowns. Its optional on-foot mode reads the English “You Are Incapacitated” suit warning. [Download reader](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/terminal-ocr-v0.1.80/wilma-terminal-ocr-0.1.80.zip) · [Setup](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/terminal_reader/README.md) |
 | **OpenRouter** | Enter a vision model ID and store the API key under `openrouter` in Wingman Secrets. Your plan determines the cost. |
 | **Local Waterfall bridge** | Use a configured Waterfall Main listener on the same PC, model `waterfall`, and its bridge secret name. Select only routes you want to receive images. [Waterfall setup](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall) |
 
