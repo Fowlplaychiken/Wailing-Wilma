@@ -4,7 +4,7 @@
 
 Wailing Wilma gives you spoken Star Citizen warnings through Wingman AI. It can watch your cockpit, an engineering terminal, a ground vehicle you’re driving or your personal HUD. A second PC can handle the image processing.
 
-**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.79/wailing_wilma-0.1.79.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
+**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.80/wailing_wilma-0.1.80.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
 
 This is a **preview**. Wilma recognized a cooler failure in Hull B footage and missed a power-plant failure on another ship. Keep the game’s instruments and alarms available.
 
@@ -23,7 +23,7 @@ Windows and Wingman’s v3 skill API are required. Voice works on the gaming PC 
 | “Warn me about shields at 35 percent.” | Changes the low-shield threshold for this session. Saved defaults live in skill settings. |
 | “Mute fuel warnings.” / “Unmute fuel warnings.” | Changes one category. “Mute Wailing Wilma” silences them all. |
 | Look at your engineering terminal. | Wilma checks labeled gauges and messages such as a named component failure, a fire or a reactor countdown. |
-| Switch on personal warnings in settings. | On foot, Wilma checks the enabled categories for suit oxygen, hydration, nutrition, blood loss and high pressure. |
+| Switch on personal warnings in settings. | On foot, Wilma checks the enabled categories for suit oxygen, hydration, nutrition, blood loss, high pressure and incapacitation. Enable incapacitation to hear the exact warning shown on your own HUD. |
 | “Wilma, you missed a cooler failure.” | Saves a private report for review. You can also report a wrong, repeated or late warning. |
 | “Increase front shields.” | With the optional Star Citizen Computer engineering companion configured, opens a review for this one change. You confirm before it is sent. The standalone warning skill has no game-input driver. |
 

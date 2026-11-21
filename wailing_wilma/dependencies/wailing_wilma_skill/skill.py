@@ -38,7 +38,7 @@ _PROMPT = build_prompt()
 # Game-log warnings that Wingman's stock Star Citizen Events skill already
 # speaks, mapped to the Wilma category it covers, with that skill's switches.
 _NOT_PERCENT = frozenset({"power", "heat", "environment", "emp", "fire", "hydration", "nutrition",
-                          "blood_loss", "pressure"})
+                          "blood_loss", "pressure", "incapacitation"})
 _SPOKEN = {"quantum_fuel": "quantum fuel", "life_support": "oxygen", "emp": "EMP",
            "suit_oxygen": "suit oxygen", "hydration": "hydration", "nutrition": "nutrition",
            "blood_loss": "blood loss", "pressure": "high pressure"}
@@ -60,6 +60,7 @@ _HEARD = {
     "hydration": "hydration", "nutrition": "nutrition",
     "blood_loss": "blood_loss", "bleeding": "blood_loss",
     "pressure": "pressure", "high_pressure": "pressure",
+    "incapacitation": "incapacitation", "incapacitated": "incapacitation",
 }
 
 _SCENE_PLAIN = {
@@ -361,7 +362,7 @@ class WailingWilma(Skill):
             text += "; warning point changed for now: " + ", ".join(
                 f"{_SPOKEN.get(c, c)} {v:g}%" for c, v in sorted(self._policy.voice_low.items()))
         off_categories = tuple(available["off"]) + tuple(
-            category for category in ("hydration", "nutrition", "blood_loss", "pressure")
+            category for category in ("hydration", "nutrition", "blood_loss", "pressure", "incapacitation")
             if category not in self._policy.personal_status_categories
             and category not in available["off"]
         )
@@ -384,7 +385,7 @@ class WailingWilma(Skill):
     @tool(name="wilma_mute_category",
           description=("Mute or unmute one kind of Wailing Wilma warning until changed "
                        "again: shields, components, fuel, quantum fuel, oxygen, suit oxygen, hydration, nutrition, "
-                       "blood loss, high pressure, hull, "
+                       "blood loss, high pressure, incapacitation, hull, "
                        "armor, power, heat, environment, EMP or fire. "
                        "Saved settings are unchanged."))
     async def wilma_mute_category(self, category: str, muted: bool) -> str:
@@ -393,13 +394,13 @@ class WailingWilma(Skill):
                           .replace(" ", "_"))
         if name is None or type(muted) is not bool:
             return ("Wailing Wilma did not change anything. Say one of: shields, components, "
-                    "fuel, quantum fuel, oxygen, suit oxygen, hydration, nutrition, blood loss, high pressure, "
+                    "fuel, quantum fuel, oxygen, suit oxygen, hydration, nutrition, blood loss, high pressure, incapacitation, "
                     "hull, armor, power, heat, environment, "
                     "EMP or fire.")
         with self._state_lock:
             if name == "suit_oxygen" and not muted and name not in self._policy.category_thresholds:
                 return "Wailing Wilma suit oxygen warnings are still off in saved settings."
-            if (name in {"hydration", "nutrition", "blood_loss", "pressure"} and not muted
+            if (name in {"hydration", "nutrition", "blood_loss", "pressure", "incapacitation"} and not muted
                     and name not in self._policy.personal_status_categories):
                 return f"Wailing Wilma {_SPOKEN.get(name, name)} warnings are still off in saved settings."
             self._policy.mute_for_now(name, muted)
