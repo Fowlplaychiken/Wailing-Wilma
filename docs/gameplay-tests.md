@@ -18,6 +18,20 @@ Each original 2026 recording played for 20 seconds at 1× and 2560 × 1440. The 
 
 On the same ROC frames, forcing High image detail returned HTTP 400 on all 11 requests, leaving scene accuracy unscored. On a repeat, Wilma’s reader identified the first High request as exceeding the model context. Switching to stock encoding on subsequent frames produced three timely correct views, two expired requests and five busy checks. The three replies had a median age of 2.980 s. Both ROC encodings and the repeat yielded zero accepted gauges.
 
+### What a smaller image changed
+
+A second pass used a 1024 × 576 thumbnail before the same stock JPEG encoder, keeping the full field of view. The original 33 frame hashes, model, general prompt, two-second cadence and three-second deadline matched. Correct viewpoints by deadline rose from 9/33 to 13/33. Fourteen stock checks occurred while a request was in progress and nine requests expired. With the smaller image, 13 checks were busy and seven requests expired.
+
+| View | Timely correct, stock → smaller | Median age of timely replies, stock → smaller |
+| --- | ---: | ---: |
+| ROC driver | 2/11 → 4/11 | 2.570 s → 2.429 s |
+| Pitbull pilot | 1/11 → 1/11 | 2.987 s → 2.890 s |
+| Mining by hand | 6/11 → 8/11 | 2.410 s → 2.136 s |
+
+Completed general-prompt requests used 2,939 input tokens at stock detail and 2,390 with the thumbnail. The smaller arm was busy on the close-up where stock mistook the hand tool for a terminal. Both arms answered the same cockpit frame, but they proposed different gauges. Those values lack independent labels.
+
+**Keep stock for warnings.** A separate paired check used the focused personal prompt on the original 1080p Onyx recording. Stock read all seven incapacitation frames. The thumbnail read six, missing the first visible banner. Both passed all four preceding quiet checks, and all 11 decoded frames matched. Median reply age improved from 1.243 s to 0.974 s. With two confirmations, the first warning offer moved from 24:38.747 to 24:39.974, **1.227 s later**. No speech ran. [Onyx at first visible banner](https://www.youtube.com/watch?v=q2YFjZ6XW4s&t=1475s)
+
 ## Engineering terminal
 
 At 2:00 in the Hull B recording, a cooler failure was already visible. It remained visible at 28 scheduled checkpoints. A camera move hid the terminal at the last three. [Watch the source footage](https://www.youtube.com/watch?v=pOfxidINFvk&t=120s)
