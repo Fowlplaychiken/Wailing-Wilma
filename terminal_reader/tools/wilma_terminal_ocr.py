@@ -202,6 +202,7 @@ def create_app(
     api_key: str | None = None,
     request_timeout_seconds: float = REQUEST_TIMEOUT_SECONDS,
     personal_incapacitation: bool = False,
+    bright_text: bool = False,
 ) -> Starlette:
     """Create the ASGI app around an already receipt-admitted recognizer.
 
@@ -217,6 +218,7 @@ def create_app(
                 or any(ord(char) < 33 or ord(char) > 126 for char in api_key)
             ))
             or type(personal_incapacitation) is not bool
+            or type(bright_text) is not bool
             or type(request_timeout_seconds) not in (int, float)
             or not 0 < request_timeout_seconds <= 30):
         raise ValueError("invalid server configuration")
@@ -261,7 +263,7 @@ def create_app(
                 image = _decode_jpeg(encoded_image)
                 try:
                     if personal:
-                        active = await read_personal_banner(image, recognizer)
+                        active = await read_personal_banner(image, recognizer, bright_text=bright_text)
                         reply = _INCAPACITATED_REPLY if active else UNKNOWN_REPLY
                     else:
                         reading = await read_native_frame(image, recognizer, native_band=True)
@@ -315,8 +317,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--api-key-env", metavar="NAME",
                         help="environment variable containing the bearer key")
     parser.add_argument("--model", default=DEFAULT_MODEL)
-    parser.add_argument("--personal-incapacitation", action="store_true",
-                        help="also read the incapacitation banner on focused personal HUD requests")
+    parser.add_argument("--personal-incapacitation", nargs="?", const="grayscale",
+                        choices=("grayscale", "bright-text"),
+                        help="read the suit banner; use bright-text for lettering on uneven backgrounds")
     parser.add_argument("--request-timeout", type=float, default=REQUEST_TIMEOUT_SECONDS)
     return parser
 
@@ -347,7 +350,8 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError) as exc:
         raise SystemExit(f"selected native OCR artifact is unavailable: {exc}") from None
     app = create_app(recognizer, model=args.model, api_key=api_key,
-                     personal_incapacitation=args.personal_incapacitation,
+                     personal_incapacitation=args.personal_incapacitation is not None,
+                     bright_text=args.personal_incapacitation == "bright-text",
                      request_timeout_seconds=args.request_timeout)
     import uvicorn
 

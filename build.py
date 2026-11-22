@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SKILL = ROOT / "wailing_wilma"
+READER_VERSION = "0.1.82"
 DEPENDENCIES = "dependencies/wailing_wilma_skill"
 SKILL_FILES = ("__init__.py", "main.py", "default_config.yaml", "logo.png")
 DEPENDENCY_FILES = (
@@ -66,7 +67,7 @@ def build_reader(destination: Path) -> dict:
         files["integrations/wingman_wilma/" + name] = (SKILL / DEPENDENCIES / name).read_bytes()
     files["LICENSE"] = (ROOT / "LICENSE").read_bytes()
     files = {name: data.replace(b"\r\n", b"\n") for name, data in files.items()}
-    return write_archive(destination, "wilma-terminal-ocr", release_version(), files, zipfile.ZIP_DEFLATED)
+    return write_archive(destination, "wilma-terminal-ocr", READER_VERSION, files, zipfile.ZIP_DEFLATED)
 
 
 def write_archive(destination: Path, prefix: str, version: str, files: dict, compression: int) -> dict:

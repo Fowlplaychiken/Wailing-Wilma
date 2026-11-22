@@ -1,10 +1,10 @@
 # Gameplay tests
 
-The latest comparison timed local and hosted readers on a new 1440p medical session. [New-session results](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/medical-transfer.md)
+In the latest tests, reviewers checked the player’s own suit warning, a medic treating someone else, and the room name, pressure and temperature on a ship console. [Suit warnings](medical-breadth.md) · [Engineering room readings](reclaimer-room.md)
 
 These runs used real gameplay at normal speed. The tests used 2560 × 1440 unless a result specifies another resolution. Reviewers checked the visible HUD before comparing model replies. The deadline was three seconds per frame unless stated otherwise.
 
-[Download the interactive benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.6/wilma-reader-results.html) and open it in your browser. It works offline. Search by model, task or reader combination to see the scoring rule, timing, recorded cost and which comparisons still need a run.
+[Download the interactive benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-22.1/reader-breadth.html) and open it in your browser. It works offline. Search by model, task or reader combination to see the scoring rule, timing, recorded cost and which comparisons still need a run.
 
 ![Paired tests on an RTX 2080 Ti and Core i7-10700K. A smaller image helped the local model recognize some viewpoints. CPU OCR read a specific suit banner faster in both tested recordings.](https://raw.githubusercontent.com/Fowlplaychiken/Wailing-Wilma/NewRepo/docs/reader-overview.png)
 

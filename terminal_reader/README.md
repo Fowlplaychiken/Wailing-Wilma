@@ -30,4 +30,6 @@ Start visual warnings by voice and look at an engineering console. Ask for **Wil
 
 With Wilma 0.1.80 or later, add `--personal-incapacitation` to the reader startup command. In Wilma turn on **Incapacitation warnings on foot**, leave **High-detail visual readings** on and turn off **Watch engineering terminals on foot**. When Wilma knows you are out of your seat, it requests the personal HUD. Seated and general requests use the engineering reader.
 
+Reader 0.1.82 adds `--personal-incapacitation bright-text` for pale HUD lettering against uneven terrain. Use it with **High-detail visual readings**. The original grayscale setting is available by omitting `bright-text`. The filter applies only to the suit banner and runs once per image on the OCR computer.
+
 The personal reader looks for the complete “You Are Incapacitated” heading and the adjacent “Time Until Death” timer in the lower-left part of the image. If OCR splits the digits from the label, it also requires the nearby rescue beacon instruction. These details help distinguish the player's HUD from a subtitle. The reader returns only the heading. An obscured heading, a different language, or a shifted HUD can leave the state unknown. An absent banner does not establish recovery or rescue. The optional reader and warning start disabled. Wilma's usual freshness and confirmation settings apply.

@@ -6,7 +6,7 @@
 </style></head>
 <body><main><header><h1>Wailing Wilma gameplay benchmarks</h1><p>Star Citizen video replay · Reader accuracy, response time and API cost</p></header>
 <section aria-labelledby="comparison"><h2 id="comparison">Matched comparisons</h2>
-<div class="options"><button id="hosted" aria-pressed="true">Compare hosted readers</button><button id="viewpoint" aria-pressed="false">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button><button id="cooler" aria-pressed="false">Read a cooler failure</button><button id="local" aria-pressed="false">Compare local model sizes</button><button id="medical" aria-pressed="false">New suit warning</button></div>
+<div class="options"><button id="rooms" aria-pressed="true">Read a room panel</button><button id="suitBreadth" aria-pressed="false">Compare fast suit readers</button><button id="hosted" aria-pressed="false">Compare hosted readers</button><button id="viewpoint" aria-pressed="false">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button><button id="cooler" aria-pressed="false">Read a cooler failure</button><button id="local" aria-pressed="false">Compare local model sizes</button><button id="medical" aria-pressed="false">New suit warning</button></div>
 <div class="chart"><p id="definition"></p><div class="barrow legend-head"><span>Reader</span><span></span><span>Correct</span><span class="time">Median¹</span></div><div id="bars"></div>
 <p id="caption" class="caption"></p></div></section>
 <section aria-labelledby="all"><h2 id="all">All trials and coverage</h2><p class="hint">Open a result for its scoring rule, hardware, costs and evidence.</p>
@@ -26,6 +26,84 @@ function node(tag, text, cls) {
   return el;
 }
 const panels = {
+  rooms: {
+  "text": "Can the reader identify the selected room and read its pressure and temperature within three seconds?",
+  "labels": {
+    "nov22-reclaimer-room-0": "Haiku 5.5 · direct",
+    "nov22-reclaimer-room-1": "Qwen3.5-4B · local",
+    "nov22-reclaimer-room-2": "Gemini 3 Flash preview",
+    "nov22-reclaimer-room-3": "Gemma 4 31B · ModelRun FP4"
+  },
+  "groups": [
+    [
+      "Reclaimer · five checks across two rooms",
+      "nov22-reclaimer-room-0",
+      "nov22-reclaimer-room-1",
+      "nov22-reclaimer-room-2",
+      "nov22-reclaimer-room-3"
+    ]
+  ],
+  "den": "scored_count",
+  "caption": "¹ Median capture to completed reply. Local Qwen used an RTX 2080 Ti with 11 GB. Its separate warmup took 4.54 s. API fees per 1,000 reads were about $0.30 for Haiku, $0 for Qwen, $0.71 for Gemini and $0.30 for Gemma. Five checks from one recording."
+},
+  suitBreadth: {
+  "text": "How many of the seven scheduled frames produced a correct, timely suit warning reading?",
+  "labels": {
+    "nov22-fast-transfer-breadth-0-scaledown-summarize": "scaledown/summarize",
+    "nov22-fast-transfer-breadth-0-meta-llama-llama-4-scout": "meta-llama/llama-4-scout",
+    "nov22-fast-transfer-breadth-0-openai-gpt-5-4": "openai/gpt-5.4",
+    "nov22-fast-transfer-breadth-0-openai-gpt-5-4-mini": "openai/gpt-5.4-mini",
+    "nov22-fast-transfer-breadth-1-google-gemini-3-1-flash-lite": "google/gemini-3.1-flash-lite",
+    "nov22-fast-transfer-breadth-1-google-gemini-3-flash-preview": "google/gemini-3-flash-preview",
+    "nov22-fast-transfer-breadth-1-x-ai-grok-4-5": "x-ai/grok-4.5",
+    "nov22-fast-transfer-breadth-2-perceptron-perceptron-mk1-5": "perceptron/perceptron-mk1.5",
+    "nov22-fast-transfer-breadth-2-openai-gpt-5-4-nano": "openai/gpt-5.4-nano",
+    "nov22-fast-transfer-breadth-2-openai-gpt-4o-mini-2024-07-18": "openai/gpt-4o-mini-2024-07-18",
+    "nov22-fast-transfer-breadth-repeat-0-scaledown-summarize": "scaledown/summarize",
+    "nov22-fast-transfer-breadth-repeat-0-meta-llama-llama-4-scout": "meta-llama/llama-4-scout",
+    "nov22-fast-transfer-breadth-repeat-0-openai-gpt-5-4": "openai/gpt-5.4",
+    "nov22-fast-transfer-breadth-repeat-0-openai-gpt-5-4-mini": "openai/gpt-5.4-mini",
+    "nov22-fast-transfer-breadth-repeat-1-google-gemini-3-1-flash-lite": "google/gemini-3.1-flash-lite",
+    "nov22-fast-transfer-breadth-repeat-1-google-gemini-3-flash-preview": "google/gemini-3-flash-preview",
+    "nov22-fast-transfer-breadth-repeat-1-x-ai-grok-4-5": "x-ai/grok-4.5",
+    "nov22-fast-transfer-edge-routes-google-gemma-4-31b-it": "google/gemma-4-31b-it",
+    "nov22-fast-transfer-edge-routes-moondream-moondream3-1-9b-a2b": "moondream/moondream3.1-9b-a2b",
+    "nov22-fast-transfer-edge-routes-xiaomi-mimo-v2-6-pro-ultraspeed": "xiaomi/mimo-v2.6-pro-ultraspeed"
+  },
+  "groups": [
+    [
+      "First pass",
+      "nov22-fast-transfer-breadth-0-scaledown-summarize",
+      "nov22-fast-transfer-breadth-0-meta-llama-llama-4-scout",
+      "nov22-fast-transfer-breadth-0-openai-gpt-5-4",
+      "nov22-fast-transfer-breadth-0-openai-gpt-5-4-mini",
+      "nov22-fast-transfer-breadth-1-google-gemini-3-1-flash-lite",
+      "nov22-fast-transfer-breadth-1-google-gemini-3-flash-preview",
+      "nov22-fast-transfer-breadth-1-x-ai-grok-4-5",
+      "nov22-fast-transfer-breadth-2-perceptron-perceptron-mk1-5",
+      "nov22-fast-transfer-breadth-2-openai-gpt-5-4-nano",
+      "nov22-fast-transfer-breadth-2-openai-gpt-4o-mini-2024-07-18"
+    ],
+    [
+      "Repeat runs",
+      "nov22-fast-transfer-breadth-repeat-0-scaledown-summarize",
+      "nov22-fast-transfer-breadth-repeat-0-meta-llama-llama-4-scout",
+      "nov22-fast-transfer-breadth-repeat-0-openai-gpt-5-4",
+      "nov22-fast-transfer-breadth-repeat-0-openai-gpt-5-4-mini",
+      "nov22-fast-transfer-breadth-repeat-1-google-gemini-3-1-flash-lite",
+      "nov22-fast-transfer-breadth-repeat-1-google-gemini-3-flash-preview",
+      "nov22-fast-transfer-breadth-repeat-1-x-ai-grok-4-5"
+    ],
+    [
+      "Pinned providers",
+      "nov22-fast-transfer-edge-routes-google-gemma-4-31b-it",
+      "nov22-fast-transfer-edge-routes-moondream-moondream3-1-9b-a2b",
+      "nov22-fast-transfer-edge-routes-xiaomi-mimo-v2-6-pro-ultraspeed"
+    ]
+  ],
+  "den": "scored_count",
+  "caption": "¹ Median time to a fresh reply. All seven scheduled positives count, even when a reader returned nothing. For warning onset, quiet controls, API fees and missing prices, open a trial below. These runs reuse one July medical incident."
+},
   medical: {
     text:"Which readers caught the July suit warning on time?",
     labels: {
@@ -154,5 +232,5 @@ function filter(){
 }
 for(const key of Object.keys(panels)) id(key).addEventListener("click",()=>draw(key));
 id("search").addEventListener("input",filter); id("type").addEventListener("change",filter); id("more").addEventListener("click",add);
-draw("hosted"); filter();
+draw("rooms"); filter();
 </script></body></html>
