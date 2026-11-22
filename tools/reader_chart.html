@@ -6,12 +6,12 @@
 </style></head>
 <body><main><header><h1>Wailing Wilma gameplay benchmarks</h1><p>Star Citizen video replay · Reader accuracy, response time and API cost</p></header>
 <section aria-labelledby="comparison"><h2 id="comparison">Matched comparisons</h2>
-<div class="options"><button id="viewpoint" aria-pressed="true">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button><button id="cooler" aria-pressed="false">Read a cooler failure</button></div>
+<div class="options"><button id="hosted" aria-pressed="true">Compare hosted readers</button><button id="viewpoint" aria-pressed="false">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button><button id="cooler" aria-pressed="false">Read a cooler failure</button><button id="local" aria-pressed="false">Compare local model sizes</button></div>
 <div class="chart"><p id="definition"></p><div class="barrow legend-head"><span>Reader</span><span></span><span>Correct</span><span class="time">Median¹</span></div><div id="bars"></div>
 <p id="caption" class="caption"></p></div></section>
 <section aria-labelledby="all"><h2 id="all">All trials and coverage</h2><p class="hint">Open a result for its scoring rule, hardware, costs and evidence.</p>
 <div class="controls"><label>Find a model, source or task<input type="search" id="search" placeholder="e.g. Jev, fuel or Qwen"></label>
-<label>Records<select id="type"><option value="">All records</option><option value="experiment">Experiments</option><option value="paced_replay">Paced replays</option><option value="candidate">Model candidates</option><option value="coverage_arm">Planned comparisons</option><option value="screen_family">Display coverage</option></select></label></div>
+<label>Records<select id="type"><option value="">All records</option><option value="experiment">Experiments</option><option value="paced_replay">Paced replays</option><option value="catalog_probe">Single-image API screen</option><option value="catalog_exclusion">Excluded catalog listings</option><option value="candidate">Model candidates</option><option value="coverage_arm">Planned comparisons</option><option value="screen_family">Display coverage</option></select></label></div>
 <p id="count" role="status"></p><div id="results"></div><button id="more" hidden>Show more results</button></section>
 <footer>Source data revision __LEDGER_SHA__ · <a href="https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/reader-trials.csv">Current CSV</a> · <a href="https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/gameplay-tests.md">Gameplay test notes</a></footer></main>
 <script id="data" type="application/json">__LEDGER_JSON__</script><script>
@@ -26,6 +26,20 @@ function node(tag, text, cls) {
   return el;
 }
 const panels = {
+  hosted: {
+    text:"How often did a hosted reader name the visible component failure within three seconds?",
+    names:["Haiku default","Gemma 4 26B","Haiku focused","Haiku literal text"],
+    groups:[["Hull B · cooler","nov21-fast-hull-screen-haiku-direct-default-512","nov21-fast-hull-screen-google-gemma-4-26b-a4b-it","nov21-fast-hull-literal-haiku-focused-json-stock-jpeg","nov21-fast-hull-literal-haiku-literal-text-stock-jpeg"],["Hermes · power plant","nov21-fast-hermes-transfer-haiku-direct-default-512","nov21-fast-hermes-transfer-google-gemma-4-26b-a4b-it","nov21-fast-hermes-literal-haiku-focused-json-stock-jpeg","nov21-fast-hermes-literal-haiku-literal-text-stock-jpeg"]],
+    den:"scored_count",
+    caption:"¹ Median time to a correct reading among hits within five seconds. A dash means there were no such hits. The two clips contain one fault each. On the Hermes, literal-text Haiku took 4.835–5.086 s from visible onset to an eligible warning. Playback latency was unmeasured. Search below for all models, prompt variations and API costs."
+  },
+  local: {
+    text:"How many scheduled checks did each unchanged Qwen3.5 model get right within three seconds?",
+    names:["2B","4B","9B"],
+    groups:[["ROC driver","nov21-qwen2b-viewonly-roc","nov21-viewonly-roc","nov21-qwen9b-viewonly-roc"],["Pitbull pilot","nov21-qwen2b-viewonly-ship","nov21-viewonly-ship","nov21-qwen9b-viewonly-ship"],["Mining on foot","nov21-qwen2b-viewonly-fps","nov21-viewonly-fps","nov21-qwen9b-viewonly-fps"],["Security Data · visible suit warning","nov21-qwen2b-onyx-stock","nov21-pair-onyx-stock","nov21-qwen9b-onyx-stock"]],
+    den:"scored_count", scheduled:{"Security Data · visible suit warning":7},
+    caption:"¹ Median time to a timely reply (see individual rows for timing scope). The 4B and 9B models each recognized 29/33 viewpoints on the same 1024 × 576 inputs. The 2B model recognized 16/33. The separate full-frame suit test counts all seven scheduled positives. One 2B frame differed from the reference. All seven 9B frames matched, but four checks found the reader busy. RTX 2080 Ti, 11 GiB. $0 API fees. Speech was unmeasured."
+  },
   viewpoint: {
     text:"How often did the local models identify the player’s viewpoint within three seconds?",
     names:["4B general, stock","4B general, 1024 px","4B view only","2B view only"],
@@ -58,17 +72,17 @@ function draw(key) {
     ids.forEach((key,i)=>{
       const item=byId.get(key); if(!item) return;
       const box=node("div",undefined,"barrow"), track=node("div",undefined,"bar");
-      const n=Number(item.correct_count), d=Number(item[p.den]), pc=Math.round(n/d*100);
+      const n=Number(item.correct_count), d=Number(p.scheduled?.[title] ?? item[p.den]), pc=Math.round(n/d*100);
       const fill=node("div",undefined,"fill"); fill.style.width=pc+"%"; fill.style.background=colors[i]; track.append(fill);
-      box.append(node("span",p.names[i]), track,node("span",n+"/"+d+" · "+pc+"%","value"), node("span",(Number(item.latency_ms)/1000).toFixed(2)+" s","time"));
+      box.append(node("span",p.names[i]), track,node("span",n+"/"+d+" · "+pc+"%","value"), node("span",item.latency_ms ? (Number(item.latency_ms)/1000).toFixed(2)+" s" : "—","time"));
       group.append(box);
     });
     groups.push(group);
   }
   id("bars").replaceChildren(...groups);
 }
-const types={experiment:"Experiment",paced_replay:"Paced replay",candidate:"Model candidate",coverage_arm:"Planned comparison",screen_family:"Display coverage"};
-const fields=[["provider","Provider or hardware"],["arm","Configuration"],["status","Status"],["input_id","Input"],["screen_family","Display"],["accuracy_percent","Accuracy (%)"],["correct_count","Correct"],["scored_count","Scored"],["accuracy_metric","Scoring rule"],["accuracy_status","Accuracy evidence"],["latency_ms","Latency (ms)"],["latency_scope","Latency definition"],["cost_usd","Reported cost ($)"],["cost_basis","Cost basis"],["estimated_hourly_usd","Est. cost per hour ($)"],["requests_per_hour","Requests per hour"],["n","Sample count"],["offered_frames","Scheduled frames"],["timely_frames","Timely frames"],["vision_requests","Vision requests"],["declared_source_groups","Source groups"],["independent_groups","Independent groups"],["findings","Findings"],["reference_quality","Ground truth"],["permutation","Combination"],["pilot_status","Pilot"],["pilot_experiment_ids","Related trials"],["holdout_status","Held-out test"],["coverage_status","Coverage"],["required","Required"],["coverage_summary","Coverage detail"],["benchmark_evidence","Evidence"],["source_url","Source"],["id","Record ID"]];
+const types={catalog_probe:"Single-image API screen",catalog_exclusion:"Excluded catalog listing",experiment:"Experiment",paced_replay:"Paced replay",candidate:"Model candidate",coverage_arm:"Planned comparison",screen_family:"Display coverage"};
+const fields=[["provider","Provider or hardware"],["arm","Configuration"],["status","Status"],["input_id","Input"],["screen_family","Display"],["accuracy_percent","Accuracy (%)"],["correct_count","Correct"],["scored_count","Scored"],["accuracy_metric","Scoring rule"],["accuracy_status","Accuracy evidence"],["latency_ms","Latency (ms)"],["latency_scope","Latency definition"],["cost_usd","API cost ($; see basis)"],["cost_basis","Cost basis"],["estimated_hourly_usd","Est. cost per hour ($)"],["requests_per_hour","Requests per hour"],["n","Sample count"],["offered_frames","Scheduled frames"],["timely_frames","Timely frames"],["vision_requests","Vision requests"],["declared_source_groups","Source groups"],["independent_groups","Independent groups"],["findings","Findings"],["reference_quality","Ground truth"],["permutation","Combination"],["pilot_status","Pilot"],["pilot_experiment_ids","Related trials"],["holdout_status","Held-out test"],["coverage_status","Coverage"],["required","Required"],["coverage_summary","Coverage detail"],["benchmark_evidence","Evidence"],["source_url","Source"],["id","Record ID"]];
 const searchable=rows.map(r=>Object.values(r).join(" ").toLowerCase());
 function result(row) {
   const item=node("details",undefined,"item"), summary=node("summary");
@@ -99,5 +113,5 @@ function filter(){
 }
 for(const key of Object.keys(panels)) id(key).addEventListener("click",()=>draw(key));
 id("search").addEventListener("input",filter); id("type").addEventListener("change",filter); id("more").addEventListener("click",add);
-draw("viewpoint"); filter();
+draw("hosted"); filter();
 </script></body></html>
