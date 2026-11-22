@@ -2,11 +2,15 @@
 
 These runs used real gameplay at normal speed. The tests used 2560 × 1440 unless a result specifies another resolution. Reviewers checked the visible HUD before comparing model replies. The deadline was three seconds per frame unless stated otherwise.
 
-[Download the interactive benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.3/wilma-reader-results.html) and open it in your browser. It works offline. Search by model, task or reader combination to see the scoring rule, timing, recorded cost and which comparisons still need a run.
+[Download the interactive benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.4/wilma-reader-results.html) and open it in your browser. It works offline. Search by model, task or reader combination to see the scoring rule, timing, recorded cost and which comparisons still need a run.
 
 ![Paired tests on an RTX 2080 Ti and Core i7-10700K. A smaller image helped the local model recognize some viewpoints. CPU OCR read a specific suit banner faster in both tested recordings.](https://raw.githubusercontent.com/Fowlplaychiken/Wailing-Wilma/NewRepo/docs/reader-overview.png)
 
 The [full comparison data](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/reader-trials.csv) includes local and hosted models, OCR and Jev trials, hardware, available costs, denominators and cases still awaiting a run. Compare rows with the same task and source. A planned run has no score.
+
+[Time from a visible suit warning to synthesized speech](warning-delivery.md) covers two recordings with a known onset. It includes sampling, confirmation and voice generation.
+
+![Time from an on-foot warning to speech data and accuracy of simultaneous Gemini and OCR on a ship fault.](warning-performance.png)
 
 ## Local reader across three viewpoints
 
@@ -48,6 +52,17 @@ On exactly the same 33 development frames, local Qwen identified **29/33 viewpoi
 
 The four ROC errors were three cockpit guesses and one exterior-view guess. In the first Pitbull pass, playback stalled after one correctly identified frame. The table uses the complete repeat. Both passes appear in the interactive results. This prompt returns the viewpoint alone. A separate reader still has to recognize the warning, and the player has to hear it in time.
 
+## Comparing unchanged local models
+
+On an RTX 2080 Ti, both Qwen models received the same viewpoint-only prompt, the same 1024 × 576 encoding and the same 33 reviewed frames. Both answered all 33 within three seconds.
+
+| Unmodified model | ROC driver | Pitbull pilot | On foot | Timely correct | Median reply |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Qwen3.5-4B Q4_K_M | 7/11 | 11/11 | 11/11 | **29/33 (88%)** | 1.300 s |
+| Qwen3.5-2B Q4_K_M | 0/11 | 11/11 | 5/11 | **16/33 (48%)** | 1.214 s |
+
+The smaller model classified every rover frame as a ship cockpit. On the separate Security Data suit-warning test with the same full-frame warning prompt, it read all six matching positives. The seventh positive frame differed from the annotated image. Three of four quiet checks returned a valid quiet response and one reply was malformed. The 4B model read all seven positives and all four quiet controls on its original pass.
+
 ## Engineering terminal
 
 At 2:00 in the Hull B recording, a cooler failure was already visible. It remained visible at 28 scheduled checkpoints. A camera move hid the terminal at the last three. [Watch the source footage](https://www.youtube.com/watch?v=pOfxidINFvk&t=120s)
@@ -60,6 +75,23 @@ At 2:00 in the Hull B recording, a cooler failure was already visible. It remain
 The CPU reader submitted “Cooler failed” once. The fault was already on screen at the start. These figures measure detection of an ongoing fault with a silent speech adapter. They give neither time to first audible warning nor precision across ships. In a separate play of the same recording, hosted Gemini 3.5 Flash-Lite also submitted one correct cooler warning. Its 20 completions cost $0.0189 in total. On a fresh Hermes recording, both tested CPU reader configurations missed the power-plant failure.
 
 ![Engineering-terminal OCR results on the development recording and a different ship.](wilma-component-transfer.png)
+
+### Gemini and OCR on the same frames
+
+In a longer window starting at 1:50 in the same recording, both runs captured 38 identical frames showing the cooler fault. CPU OCR recognized **20/38 (53%)** within three seconds. Gemini 3.5 Flash-Lite recognized **15/38 (39%)**. Gemini identified nine that OCR missed, bringing their combined coverage on recorded replies to **29/38 (76%)**. Only one matching frame showed the terminal out of view. This leaves the false-alarm rate and the speed of running both readers together open. [Hull B footage from 1:50](https://www.youtube.com/watch?v=pOfxidINFvk&t=110s)
+
+Each reader submitted one correct warning. From the first already-visible fault to submission, OCR took 2.89 s and Gemini took 3.86 s. The 20 completed Gemini requests cost $0.0189135 in total. OCR incurred $0 in API fees.
+
+### Running both readers together
+
+Both readers then watched the same 41 frames simultaneously. All 41 matched the reviewer’s original images in each pass. The local reader used high-detail JPEG. Gemini received stock JPEG. Three controls showed the terminal out of view.
+
+| Gemini prompt | Gemini alone | CPU OCR alone | Either reader by 3 s | Median time to first correct reading on a detected frame | Reported API charges |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| General | 6/38 | 17/38 | **20/38 (53%)** | 0.772 s | At least $0.00851 |
+| Component failures only | 5/38 | 18/38 | **21/38 (55%)** | 0.741 s | At least $0.00544 |
+
+Adding Gemini caught three extra frames in each pass. Asking Gemini only for failures did not improve its own detection. The combined reader stayed quiet on all three controls in each pass. This was one ongoing failure, with the same three controls replayed twice. Seven general requests and six focused requests expired with unknown charges. These results measure the first accepted frame reading. Speaking a warning requires a second confirming frame.
 
 ## Cockpit, vehicle and on foot
 
