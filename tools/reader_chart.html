@@ -6,7 +6,7 @@
 </style></head>
 <body><main><header><h1>Wailing Wilma gameplay benchmarks</h1><p>Star Citizen video replay · Reader accuracy, response time and API cost</p></header>
 <section aria-labelledby="comparison"><h2 id="comparison">Matched comparisons</h2>
-<div class="options"><button id="rooms" aria-pressed="true">Read a room panel</button><button id="suitBreadth" aria-pressed="false">Compare fast suit readers</button><button id="hosted" aria-pressed="false">Compare hosted readers</button><button id="viewpoint" aria-pressed="false">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button><button id="cooler" aria-pressed="false">Read a cooler failure</button><button id="local" aria-pressed="false">Compare local model sizes</button><button id="medical" aria-pressed="false">New suit warning</button></div>
+<div class="options"><button id="rooms" aria-pressed="true">Read a room panel</button><button id="personalSuit" aria-pressed="false">Read the suit gauge</button><button id="suitBreadth" aria-pressed="false">Compare fast suit readers</button><button id="hosted" aria-pressed="false">Compare hosted readers</button><button id="viewpoint" aria-pressed="false">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button><button id="cooler" aria-pressed="false">Read a cooler failure</button><button id="local" aria-pressed="false">Compare local model sizes</button><button id="medical" aria-pressed="false">New suit warning</button></div>
 <div class="chart"><p id="definition"></p><div class="barrow legend-head"><span>Reader</span><span></span><span>Correct</span><span class="time">Median¹</span></div><div id="bars"></div>
 <p id="caption" class="caption"></p></div></section>
 <section aria-labelledby="all"><h2 id="all">All trials and coverage</h2><p class="hint">Open a result for its scoring rule, hardware, costs and evidence.</p>
@@ -26,6 +26,24 @@ function node(tag, text, cls) {
   return el;
 }
 const panels = {
+  personalSuit: {
+  "text": "Can the reader distinguish a suit percentage from a medication indicator or an open inventory?",
+  "names": [
+    "Haiku 5.5",
+    "Gemini 3 Flash preview",
+    "Qwen3.5-4B Q4_K_M"
+  ],
+  "groups": [
+    [
+      "Citizen Akademi · three readable values and five controls",
+      "nov22-personal-suit-haiku",
+      "nov22-personal-suit-gemini",
+      "nov22-personal-suit-qwen"
+    ]
+  ],
+  "den": "scored_count",
+  "caption": "Median time covers all nine checks. The fourth positive frame had an ambiguous digit and is excluded from exact accuracy. Haiku and Qwen read 3/3 clear values, Gemini 2/3. Valid empty replies on the controls were 4/5, 1/5 and 5/5 respectively. One 1080p recording. No spoken warning was tested."
+},
   rooms: {
   "text": "Can the reader identify the selected room and read its pressure and temperature within three seconds?",
   "labels": {
