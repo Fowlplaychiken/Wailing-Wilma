@@ -2,7 +2,7 @@
 
 These runs used real gameplay at normal speed. The tests used 2560 × 1440 unless a result specifies another resolution. Reviewers checked the visible HUD before comparing model replies. The deadline was three seconds per frame unless stated otherwise.
 
-[Download the interactive benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.2/wilma-reader-results.html) and open it in your browser. It works offline. Search by model, task or reader combination to see the scoring rule, timing, recorded cost and which comparisons still need a run.
+[Download the interactive benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.3/wilma-reader-results.html) and open it in your browser. It works offline. Search by model, task or reader combination to see the scoring rule, timing, recorded cost and which comparisons still need a run.
 
 ![Paired tests on an RTX 2080 Ti and Core i7-10700K. A smaller image helped the local model recognize some viewpoints. CPU OCR read a specific suit banner faster in both tested recordings.](https://raw.githubusercontent.com/Fowlplaychiken/Wailing-Wilma/NewRepo/docs/reader-overview.png)
 
@@ -35,6 +35,18 @@ A second pass used a 1024 × 576 thumbnail before the same stock JPEG encoder, k
 Completed general-prompt requests used 2,939 input tokens at stock detail and 2,390 with the thumbnail. The smaller arm was busy on the close-up where stock mistook the hand tool for a terminal. Both arms answered the same cockpit frame, but they proposed different gauges. Those values lack independent labels.
 
 **Keep stock for warnings.** A separate paired check used the focused personal prompt on the original 1080p Onyx recording. Stock read all seven incapacitation frames. The thumbnail read six, missing the first visible banner. Both passed all four preceding quiet checks, and all 11 decoded frames matched. Median reply age improved from 1.243 s to 0.974 s. With two confirmations, the first warning offer moved from 24:38.747 to 24:39.974, **1.227 s later**. No speech ran. [Onyx at first visible banner](https://www.youtube.com/watch?v=q2YFjZ6XW4s&t=1475s)
+
+## Asking only for the viewpoint
+
+On exactly the same 33 development frames, local Qwen identified **29/33 viewpoints within three seconds (88%)** when asked only where the player was. The general prompt with the same 1024 × 576 input also asked for instruments and scored 13/33. Each scheduled check counts, including busy or expired ones.
+
+| Viewpoint-only result | Timely correct | Median time from frame to reply |
+| --- | ---: | ---: |
+| ROC driver | 7/11 | 1.29 s |
+| Pitbull pilot | 11/11 | 1.25 s |
+| Mining on foot | 11/11 | 1.42 s |
+
+The four ROC errors were three cockpit guesses and one exterior-view guess. In the first Pitbull pass, playback stalled after one correctly identified frame. The table uses the complete repeat. Both passes appear in the interactive results. This prompt returns the viewpoint alone. A separate reader still has to recognize the warning, and the player has to hear it in time.
 
 ## Engineering terminal
 
