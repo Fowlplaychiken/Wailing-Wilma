@@ -1,7 +1,7 @@
 module: skills.wailing_wilma.main
 name: WailingWilma
 api_version: 3
-version: 0.1.80
+version: 0.1.81
 display_name: Wailing Wilma
 author: Star Citizen Computer project
 description:

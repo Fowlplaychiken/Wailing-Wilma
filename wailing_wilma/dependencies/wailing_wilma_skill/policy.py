@@ -287,6 +287,7 @@ _SHIP_OVERVIEW_PAGE = "3d view"
 _STATUS_STRIP = "engineering status strip"
 _FAILURE_STRIP = "engineering component failure strip"
 _STATUS_LABELS = frozenset({"armor", "hull", "cooling system", "life support", "hydrogen fuel"})
+_STATUS_ROW_LABELS = _STATUS_LABELS | {"nav", "scm"}
 _SHIP_OVERVIEW_CUES = frozenset({"systems", "rooms", "connections"})
 _SHIP_OVERVIEW_READINGS = frozenset({"fuel_percent", "quantum_fuel_percent",
                                     "hull_integrity_percent", "armor_percent"})
@@ -329,11 +330,13 @@ def _failure_strip_subject(banner: object) -> str | None:
 
 
 def _has_ship_status_labels(labels: object) -> bool:
-    if (type(labels) is not list or not 2 <= len(labels) <= len(_STATUS_LABELS)
+    if (type(labels) is not list or not 2 <= len(labels) <= len(_STATUS_ROW_LABELS)
             or not all(type(label) is str for label in labels)):
         return False
     distinct = {label.strip().casefold() for label in labels}
-    return len(distinct) == len(labels) and distinct <= _STATUS_LABELS
+    # NAV and SCM can appear beside the gauges. Only distinct gauge names identify the strip.
+    return (len(distinct) == len(labels) and distinct <= _STATUS_ROW_LABELS
+            and len(distinct & _STATUS_LABELS) >= 2)
 
 
 def _terminal_view(payload: object) -> TerminalView | None:
