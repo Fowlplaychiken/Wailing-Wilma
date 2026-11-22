@@ -2,9 +2,13 @@
 
 These runs used real gameplay at normal speed. The tests used 2560 × 1440 unless a result specifies another resolution. Reviewers checked the visible HUD before comparing model replies. The deadline was three seconds per frame unless stated otherwise.
 
-[Download the interactive benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.4/wilma-reader-results.html) and open it in your browser. It works offline. Search by model, task or reader combination to see the scoring rule, timing, recorded cost and which comparisons still need a run.
+[Download the interactive benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.5/wilma-reader-results.html) and open it in your browser. It works offline. Search by model, task or reader combination to see the scoring rule, timing, recorded cost and which comparisons still need a run.
 
 ![Paired tests on an RTX 2080 Ti and Core i7-10700K. A smaller image helped the local model recognize some viewpoints. CPU OCR read a specific suit banner faster in both tested recordings.](https://raw.githubusercontent.com/Fowlplaychiken/Wailing-Wilma/NewRepo/docs/reader-overview.png)
+
+[Compare 42 hosted vision models and the Haiku prompt trials](hosted-readers.md). The tests measure both correct readings and how long Wilma took to confirm a warning on two ships.
+
+![Hosted readers on two ship failures, showing recognition, response time and first eligible warning.](hosted-readers.png)
 
 The [full comparison data](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/reader-trials.csv) includes local and hosted models, OCR and Jev trials, hardware, available costs, denominators and cases still awaiting a run. Compare rows with the same task and source. A planned run has no score.
 
@@ -54,14 +58,19 @@ The four ROC errors were three cockpit guesses and one exterior-view guess. In t
 
 ## Comparing unchanged local models
 
-On an RTX 2080 Ti, both Qwen models received the same viewpoint-only prompt, the same 1024 × 576 encoding and the same 33 reviewed frames. Both answered all 33 within three seconds.
+On an RTX 2080 Ti, Qwen3.5-4B and 9B each identified **29 of 33 viewpoints** within three seconds. The 4B model returned a timely reply on every frame and had a lower median reply time. The 9B model recognized two more ROC views but missed two Pitbull checks while a request was running. All three models used their original Q4_K_M weights, the same viewpoint-only prompt and the same 1024 × 576 encoding. Every native frame matched across the three runs.
 
-| Unmodified model | ROC driver | Pitbull pilot | On foot | Timely correct | Median reply |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Qwen3.5-4B Q4_K_M | 7/11 | 11/11 | 11/11 | **29/33 (88%)** | 1.300 s |
-| Qwen3.5-2B Q4_K_M | 0/11 | 11/11 | 5/11 | **16/33 (48%)** | 1.214 s |
+| Model | ROC driver | Pitbull pilot | On foot | Correct within 3 s | Timely replies | Median timely reply |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Qwen3.5-2B | 0/11 | 11/11 | 5/11 | 16/33 (48%) | 33/33 | 1.214 s |
+| Qwen3.5-4B | 7/11 | 11/11 | 11/11 | **29/33 (88%)** | 33/33 | 1.300 s |
+| Qwen3.5-9B | 9/11 | 9/11 | 11/11 | **29/33 (88%)** | 31/33 | 1.764 s |
 
-The smaller model classified every rover frame as a ship cockpit. On the separate Security Data suit-warning test with the same full-frame warning prompt, it read all six matching positives. The seventh positive frame differed from the annotated image. Three of four quiet checks returned a valid quiet response and one reply was malformed. The 4B model read all seven positives and all four quiet controls on its original pass.
+The 2B model classified every rover frame as a ship cockpit. The 9B model made that mistake twice. On the Pitbull, one 9B request expired and the next scheduled check found the reader busy. All three tests used a two-second cadence and incurred $0 in API fees.
+
+**Reading the suit warning was a separate task.** On the 1080p Security Data recording, all three models received the same full-frame personal-warning prompt. The 4B model read all seven scheduled positive frames and returned a valid quiet reply on all four preceding controls. The 2B model read six of seven positives. The remaining frame differed from the reference. It returned three valid quiet replies and one malformed reply.
+
+The 9B model read **three of seven** positives within three seconds. All seven frames matched the reviewed pixels, but the reader was busy on four, including the first positive. Its three detections had a median reply time of 2.297 s. Of four scheduled quiet checks, two returned valid quiet replies, one found the reader busy and one frame differed from the reference. Speech delivery was unmeasured in these model comparisons. [Security Data at the first visible banner](https://www.youtube.com/watch?v=q2YFjZ6XW4s&t=1475s)
 
 ## Engineering terminal
 

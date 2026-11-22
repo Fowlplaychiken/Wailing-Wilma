@@ -4,9 +4,9 @@
 
 Wailing Wilma gives you spoken Star Citizen warnings through Wingman AI. It can watch your cockpit, an engineering terminal, a ground vehicle you’re driving or your personal HUD. A second PC can handle the image processing.
 
-**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.80/wailing_wilma-0.1.80.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [Offline benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.4/wilma-reader-results.html) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
+**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.80/wailing_wilma-0.1.80.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [Offline benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.5/wilma-reader-results.html) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
 
-This is a **preview**. Wilma recognized a cooler failure in Hull B footage and missed a power-plant failure on another ship. Keep the game’s instruments and alarms available.
+This is a **preview**. In gameplay tests, local OCR read an incapacitation banner quickly. On ship terminals, even the fastest hosted readers missed visible faults or warned late. [See the comparison on two ships](docs/hosted-readers.md).
 
 ## Start using Wilma
 
