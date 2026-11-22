@@ -4,7 +4,7 @@
 
 Wailing Wilma gives you spoken Star Citizen warnings through Wingman AI. It can watch your cockpit, an engineering terminal, a ground vehicle you’re driving or your personal HUD. A second PC can handle the image processing.
 
-**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.81/wailing_wilma-0.1.81.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [Offline benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-22.1/reader-breadth.html) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
+**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.81/wailing_wilma-0.1.81.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [Offline benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-22.2/reader-breadth.html) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
 
 This is a **preview**. The CPU reader confirmed a visible suit warning in 1.65–2.65 seconds in one medical encounter. Hosted Haiku and local Qwen each read all five sampled engineering frames within three seconds. Other warnings still have gaps. [Suit warnings](docs/medical-breadth.md) · [Room readings](docs/reclaimer-room.md)
 
