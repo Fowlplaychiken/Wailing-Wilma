@@ -6,7 +6,7 @@
 </style></head>
 <body><main><header><h1>Wailing Wilma gameplay benchmarks</h1><p>Star Citizen video replay · Reader accuracy, response time and API cost</p></header>
 <section aria-labelledby="comparison"><h2 id="comparison">Matched comparisons</h2>
-<div class="options"><button id="viewpoint" aria-pressed="true">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button></div>
+<div class="options"><button id="viewpoint" aria-pressed="true">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button><button id="cooler" aria-pressed="false">Read a cooler failure</button></div>
 <div class="chart"><p id="definition"></p><div class="barrow legend-head"><span>Reader</span><span></span><span>Correct</span><span class="time">Median¹</span></div><div id="bars"></div>
 <p id="caption" class="caption"></p></div></section>
 <section aria-labelledby="all"><h2 id="all">All trials and coverage</h2><p class="hint">Open a result for its scoring rule, hardware, costs and evidence.</p>
@@ -27,11 +27,18 @@ function node(tag, text, cls) {
 }
 const panels = {
   viewpoint: {
-    text:"How often did Qwen3.5-4B identify the player’s viewpoint within three seconds?",
-    names:["General, stock","General, 1024 px","View only, 1024 px"],
-    groups:[["ROC driver","nov21-qwen-roc-stock","nov21-pair-roc-1024","nov21-viewonly-roc"],["Pitbull pilot","nov21-qwen-pitbull-stock","nov21-pair-ship-1024","nov21-viewonly-ship"],["Mining on foot","nov21-qwen-hand-mining-stock","nov21-pair-fps-1024","nov21-viewonly-fps"]],
+    text:"How often did the local models identify the player’s viewpoint within three seconds?",
+    names:["4B general, stock","4B general, 1024 px","4B view only","2B view only"],
+    groups:[["ROC driver","nov21-qwen-roc-stock","nov21-pair-roc-1024","nov21-viewonly-roc","nov21-qwen2b-viewonly-roc"],["Pitbull pilot","nov21-qwen-pitbull-stock","nov21-pair-ship-1024","nov21-viewonly-ship","nov21-qwen2b-viewonly-ship"],["Mining on foot","nov21-qwen-hand-mining-stock","nov21-pair-fps-1024","nov21-viewonly-fps","nov21-qwen2b-viewonly-fps"]],
     den:"offered_frames",
-    caption:"¹ Median from capture to a timely reply. Each row covers 11 scheduled checks at 1440p. Busy and expired checks count against accuracy. RTX 2080 Ti, 11 GiB, Core i7-10700K. Local processing, $0 API fees."
+    caption:"¹ Median from capture to a timely reply. Each row covers 11 scheduled checks at 1440p. Busy and expired checks count against accuracy. Both viewpoint-only rows use 1024 × 576. RTX 2080 Ti, 11 GiB, Core i7-10700K. Local processing, $0 API fees."
+  },
+  cooler: {
+    text:"How often did Gemini or CPU OCR catch the visible failure when both ran on the same moving video?",
+    names:["Gemini Flash-Lite","CPU OCR","Either reader"],
+    groups:[["General Gemini prompt","nov21-hull-concurrent-general-gemini","nov21-hull-concurrent-general-ocr","nov21-hull-concurrent-general-either"],["Component failures only","nov21-hull-concurrent-focused-gemini","nov21-hull-concurrent-focused-ocr","nov21-hull-concurrent-focused-either"]],
+    den:"scored_count",
+    caption:"¹ Median time to a correct reading on the detected frames. All 38 visible-fault frames count toward accuracy. Three terminal-absent controls stayed quiet in each pass. Same ongoing Hull B warning. Reported API cost was at least $0.00851 (general) and $0.00544 (focused). Billing for expired calls is unknown."
   },
   banner: {
     text:"How often did the reader identify the visible “You Are Incapacitated” banner?",
@@ -42,7 +49,7 @@ const panels = {
   }
 };
 function draw(key) {
-  const p = panels[key], colors=["var(--sky)","var(--mint)","var(--amber)"];
+  const p = panels[key], colors=["var(--sky)","var(--mint)","var(--amber)","#cca6ea"];
   Object.keys(panels).forEach(k=>id(k).setAttribute("aria-pressed",k===key));
   id("definition").textContent=p.text; id("caption").textContent=p.caption;
   const groups=[];
