@@ -4,9 +4,9 @@
 
 Wailing Wilma gives you spoken Star Citizen warnings through Wingman AI. It can watch your cockpit, an engineering terminal, a ground vehicle you’re driving or your personal HUD. A second PC can handle the image processing.
 
-**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.81/wailing_wilma-0.1.81.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [Offline benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.5/wilma-reader-results.html) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
+**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.81/wailing_wilma-0.1.81.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [Offline benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.6/wilma-reader-results.html) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
 
-This is a **preview**. In gameplay tests, local OCR read an incapacitation banner quickly. On ship terminals, even fast hosted readers missed visible faults or warned late. [Compare the API models](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/catalog-screen.md) · [Haiku and other readers on two ships](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/hosted-readers.md)
+This is a **preview**. Local OCR caught the suit warning quickly in two recordings and missed it throughout a third. On ship terminals, fast hosted readers sometimes missed visible faults or warned late. [See the new suit test](docs/medical-transfer.md). [Compare the API models](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/catalog-screen.md) · [Haiku and other readers on two ships](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/hosted-readers.md)
 
 ## Start using Wilma
 

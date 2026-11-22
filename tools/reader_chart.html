@@ -6,7 +6,7 @@
 </style></head>
 <body><main><header><h1>Wailing Wilma gameplay benchmarks</h1><p>Star Citizen video replay · Reader accuracy, response time and API cost</p></header>
 <section aria-labelledby="comparison"><h2 id="comparison">Matched comparisons</h2>
-<div class="options"><button id="hosted" aria-pressed="true">Compare hosted readers</button><button id="viewpoint" aria-pressed="false">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button><button id="cooler" aria-pressed="false">Read a cooler failure</button><button id="local" aria-pressed="false">Compare local model sizes</button></div>
+<div class="options"><button id="hosted" aria-pressed="true">Compare hosted readers</button><button id="viewpoint" aria-pressed="false">Recognize the viewpoint</button><button id="banner" aria-pressed="false">Read a suit warning</button><button id="cooler" aria-pressed="false">Read a cooler failure</button><button id="local" aria-pressed="false">Compare local model sizes</button><button id="medical" aria-pressed="false">New suit warning</button></div>
 <div class="chart"><p id="definition"></p><div class="barrow legend-head"><span>Reader</span><span></span><span>Correct</span><span class="time">Median¹</span></div><div id="bars"></div>
 <p id="caption" class="caption"></p></div></section>
 <section aria-labelledby="all"><h2 id="all">All trials and coverage</h2><p class="hint">Open a result for its scoring rule, hardware, costs and evidence.</p>
@@ -26,6 +26,47 @@ function node(tag, text, cls) {
   return el;
 }
 const panels = {
+  medical: {
+    text:"Which readers caught the July suit warning on time?",
+    labels: {
+      "nov22-foxy-medical-cohort-haiku-default": "Haiku 5.5 · default",
+      "nov22-foxy-medical-cohort-haiku-off": "Haiku 5.5 · thinking off",
+      "nov22-foxy-medical-cohort-gemma": "Gemma 4 26B A4B",
+      "nov22-foxy-medical-cohort-flash-lite-25": "Gemini 2.5 Flash-Lite",
+      "nov22-foxy-medical-cohort-nova": "Nova Lite v1",
+      "nov22-foxy-medical-cohort-flash-lite-35": "Gemini 3.5 Flash-Lite",
+      "nov22-foxy-medical-solo-haiku-off": "Haiku 5.5 · thinking off · solo",
+      "nov22-foxy-medical-local-ocr": "Tesseract OCR · local",
+      "nov22-foxy-medical-local-qwen": "Qwen3.5-4B · local",
+      "nov22-foxy-medical-pin-cerebras": "Qwen3.8-27B · Cerebras",
+      "nov22-foxy-medical-pin-modal": "Muse Spark Open · Modal",
+      "nov22-foxy-medical-pin-baseten": "Muse Spark Open · Baseten",
+      "nov22-foxy-medical-pin-cerebras-no-thinking": "Qwen3.8-27B · thinking off"
+},
+    groups: [
+      [
+            "Eight local and hosted configurations",
+            "nov22-foxy-medical-cohort-haiku-off",
+            "nov22-foxy-medical-cohort-haiku-default",
+            "nov22-foxy-medical-cohort-gemma",
+            "nov22-foxy-medical-cohort-flash-lite-25",
+            "nov22-foxy-medical-cohort-nova",
+            "nov22-foxy-medical-cohort-flash-lite-35",
+            "nov22-foxy-medical-local-qwen",
+            "nov22-foxy-medical-local-ocr"
+      ],
+      [
+            "Single reader and pinned providers",
+            "nov22-foxy-medical-solo-haiku-off",
+            "nov22-foxy-medical-pin-cerebras",
+            "nov22-foxy-medical-pin-modal",
+            "nov22-foxy-medical-pin-baseten",
+            "nov22-foxy-medical-pin-cerebras-no-thinking"
+      ]
+],
+    den:"scored_count",
+    caption:"¹ Median capture-to-reply across fresh parsed responses. Accuracy uses all seven scheduled positive frames. Missing frames and busy readers count as misses. A fast reply can still omit the warning. Open the records below for the first two-reading confirmation, control coverage and charges."
+  },
   hosted: {
     text:"How often did a hosted reader name the visible component failure within three seconds?",
     names:["Haiku default","Gemma 4 26B","Haiku focused","Haiku literal text"],
@@ -73,8 +114,8 @@ function draw(key) {
       const item=byId.get(key); if(!item) return;
       const box=node("div",undefined,"barrow"), track=node("div",undefined,"bar");
       const n=Number(item.correct_count), d=Number(p.scheduled?.[title] ?? item[p.den]), pc=Math.round(n/d*100);
-      const fill=node("div",undefined,"fill"); fill.style.width=pc+"%"; fill.style.background=colors[i]; track.append(fill);
-      box.append(node("span",p.names[i]), track,node("span",n+"/"+d+" · "+pc+"%","value"), node("span",item.latency_ms ? (Number(item.latency_ms)/1000).toFixed(2)+" s" : "—","time"));
+      const fill=node("div",undefined,"fill"); fill.style.width=pc+"%"; fill.style.background=colors[i%colors.length]; track.append(fill);
+      box.append(node("span",p.labels?.[key] ?? p.names[i]), track,node("span",n+"/"+d+" · "+pc+"%","value"), node("span",item.latency_ms ? (Number(item.latency_ms)/1000).toFixed(2)+" s" : "—","time"));
       group.append(box);
     });
     groups.push(group);

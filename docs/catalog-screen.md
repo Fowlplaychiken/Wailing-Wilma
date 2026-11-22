@@ -8,6 +8,12 @@
 
 The screen covers OpenRouter's interactive image-to-text catalog under its default provider routing. A model that missed the cooler on this frame may still read a different display well. Direct streaming services remain untested. [Provider routing](https://openrouter.ai/docs/guides/routing/provider-selection)
 
+### Which fast services did the screen cover?
+
+The catalog screen used one request per model through OpenRouter. A provider that hosts the same model can have different latency. The direct Anthropic tests and the separate provider-routing trials identify the route used. The July on-foot comparison also measures how long Wilma took to confirm the warning after it first appeared. [Direct Haiku trials](hosted-readers.md) · [July gameplay](medical-transfer.md)
+
+Two direct services remain outside those measurements. Google's Gemini Live accepts a video frame each second over a persistent session. Groq lists Qwen3.8-27B and Muse Spark Open for images. The OpenRouter endpoint lists for those two models did not advertise Groq at the time of the check. Their catalog results cannot establish speed on Groq hardware. [Gemini Live video](https://aistudio.google.com/docs/live-api/capabilities#send-video) · [Groq vision](https://console.groq.com/docs/vision) · [Qwen provider list](https://openrouter.ai/api/v1/models/qwen/qwen3.8-27b/endpoints) · [Muse provider list](https://openrouter.ai/api/v1/models/meta/muse-spark-open/endpoints)
+
 ### Does routing to a faster provider help?
 
 On the same 20 Hermes frames, latency sorting reduced Gemma's median reply from 2.318 s to 1.541 s. It still missed all 13 power plant readings. GPT-4o read two of 13 with default routing and five with latency sorting. Its median reply was 2.172 s and 2.244 s respectively. The five correct replies identified different parts of the terminal, so Wilma never confirmed the warning. No arm produced an eligible warning. All 32 requests had reported costs, totaling $0.09552. [Matched routing results](reader-trials.csv)
