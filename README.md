@@ -4,9 +4,9 @@
 
 Wailing Wilma gives you spoken Star Citizen warnings through Wingman AI. It can watch your cockpit, an engineering terminal, a ground vehicle you’re driving or your personal HUD. A second PC can handle the image processing.
 
-**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.81/wailing_wilma-0.1.81.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [Offline benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-21.6/wilma-reader-results.html) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
+**[Download the Windows skill ZIP](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/v0.1.81/wailing_wilma-0.1.81.zip)** · [Gameplay test results](docs/gameplay-tests.md) · [Offline benchmark chart](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/benchmarks-2026-11-22.1/reader-breadth.html) · [All releases](https://github.com/Fowlplaychiken/Wailing-Wilma/releases)
 
-This is a **preview**. Local OCR caught the suit warning quickly in two recordings and missed it throughout a third. On ship terminals, fast hosted readers sometimes missed visible faults or warned late. [See the new suit test](docs/medical-transfer.md). [Compare the API models](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/catalog-screen.md) · [Haiku and other readers on two ships](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/docs/hosted-readers.md)
+This is a **preview**. The CPU reader confirmed a visible suit warning in 1.65–2.65 seconds in one medical encounter. Hosted Haiku and local Qwen each read all five sampled engineering frames within three seconds. Other warnings still have gaps. [Suit warnings](docs/medical-breadth.md) · [Room readings](docs/reclaimer-room.md)
 
 ## Start using Wilma
 
@@ -14,7 +14,7 @@ This is a **preview**. Local OCR caught the suit warning quickly in two recordin
 2. Open Wingman and enable **Wailing Wilma** for your Wingman. Select an image-capable vision model in Wingman, or choose a separate reader in Wilma’s settings.
 3. Bring Star Citizen to the foreground and say **“Start Wailing Wilma.”** Ask **“Wailing Wilma status”** to hear what it can read. Say **“Stop Wailing Wilma”** when you’re done.
 
-Windows and Wingman’s v3 skill API are required. Voice works on the gaming PC with one monitor. For an upgrade, keep your existing profile and extract the new ZIP over the skill folder while Wingman is closed.
+Windows and Wingman’s v3 skill API are required. Hosted vision works without a local AI model or a dedicated inference GPU. Voice works on the gaming PC with one monitor. For an upgrade, keep your existing profile and extract the new ZIP over the skill folder while Wingman is closed.
 
 ## What you can ask for
 
@@ -37,7 +37,7 @@ By default, Wilma looks for two fresh readings before speaking. Glare, small tex
 | --- | --- |
 | **Wingman’s configured model** | Uses your Wingman’s existing vision setup. |
 | **Ollama** or **OpenAI-compatible server** | Enter the image-capable model’s name and the server’s `/v1` address. On a second PC, use that PC’s reachable address. |
-| **Local CPU reader** | Choose **OpenAI-compatible server** and model `wilma-terminal-ocr` for engineering component failures and reactor countdowns. Its optional on-foot mode reads the English “You Are Incapacitated” suit warning. [Download reader](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/terminal-ocr-v0.1.81/wilma-terminal-ocr-0.1.81.zip) · [Setup](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/terminal_reader/README.md) |
+| **Local CPU reader** | Choose **OpenAI-compatible server** and model `wilma-terminal-ocr` for engineering component failures and reactor countdowns. Its optional on-foot mode reads the English “You Are Incapacitated” suit warning. [Download reader](https://github.com/Fowlplaychiken/Wailing-Wilma/releases/download/terminal-ocr-v0.1.82/wilma-terminal-ocr-0.1.82.zip) · [Setup](https://github.com/Fowlplaychiken/Wailing-Wilma/blob/NewRepo/terminal_reader/README.md) |
 | **OpenRouter** | Enter a vision model ID and store the API key under `openrouter` in Wingman Secrets. Your plan determines the cost. |
 | **Local Waterfall bridge** | Use a configured Waterfall Main listener on the same PC, model `waterfall`, and its bridge secret name. Select only routes you want to receive images. [Waterfall setup](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall) |
 
